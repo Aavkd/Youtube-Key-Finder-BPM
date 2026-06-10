@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Key Finder — Pages</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<style>
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body { font-family: "Space Grotesk", system-ui, sans-serif; }
+
+  /* ── Key Finder theme tokens (dark, maximal glass) ─────────────── */
+  .kf {
+    --kf-ink: rgba(255,255,255,0.94);
+    --kf-ink-2: rgba(232,234,248,0.62);
+    --kf-ink-3: rgba(220,224,245,0.40);
+    --kf-line: rgba(255,255,255,0.10);
+    --kf-line-2: rgba(255,255,255,0.16);
+    --kf-glass: rgba(255,255,255,0.055);
+    --kf-glass-2: rgba(255,255,255,0.085);
+    --kf-glass-hi: rgba(255,255,255,0.14);
+    --kf-base: #07060e;
+    --kf-mono: "JetBrains Mono", ui-monospace, monospace;
+    font-family: "Space Grotesk", system-ui, sans-serif;
+    color: var(--kf-ink);
+    -webkit-font-smoothing: antialiased;
+    letter-spacing: -0.01em;
+  }
+
+  /* Frosted glass surface — layered translucency + inner highlight */
+  .kf-glass {
+    background:
+      linear-gradient(180deg, rgba(255,255,255,0.10), rgba(255,255,255,0.03));
+    backdrop-filter: blur(34px) saturate(1.45);
+    -webkit-backdrop-filter: blur(34px) saturate(1.45);
+    border: 1px solid var(--kf-line);
+    box-shadow:
+      0 1px 0 rgba(255,255,255,0.16) inset,
+      0 -1px 0 rgba(0,0,0,0.25) inset,
+      0 24px 60px -20px rgba(0,0,0,0.7);
+  }
+  .kf-glass-soft {
+    background: linear-gradient(180deg, rgba(255,255,255,0.07), rgba(255,255,255,0.022));
+    backdrop-filter: blur(22px) saturate(1.3);
+    -webkit-backdrop-filter: blur(22px) saturate(1.3);
+    border: 1px solid var(--kf-line);
+    box-shadow: 0 1px 0 rgba(255,255,255,0.10) inset;
+  }
+
+  .kf-mono { font-family: var(--kf-mono); font-feature-settings: "tnum" 1; }
+
+  /* Aurora blobs */
+  .kf-aurora { position: absolute; border-radius: 50%; filter: blur(70px); opacity: 0.85; pointer-events: none; will-change: transform; mix-blend-mode: screen; }
+  @keyframes kfDrift1 { 0%{transform:translate(0,0) scale(1)} 50%{transform:translate(60px,-40px) scale(1.18)} 100%{transform:translate(0,0) scale(1)} }
+  @keyframes kfDrift2 { 0%{transform:translate(0,0) scale(1.1)} 50%{transform:translate(-70px,50px) scale(0.92)} 100%{transform:translate(0,0) scale(1.1)} }
+  @keyframes kfDrift3 { 0%{transform:translate(0,0) scale(1)} 50%{transform:translate(40px,60px) scale(1.12)} 100%{transform:translate(0,0) scale(1)} }
+  @keyframes kfPulse  { 0%,100%{opacity:.55; transform:scale(1)} 50%{opacity:.95; transform:scale(1.06)} }
+  @keyframes kfSpin   { to { transform: rotate(360deg); } }
+  @keyframes kfBars   { 0%,100%{transform:scaleY(0.35)} 50%{transform:scaleY(1)} }
+
+  /* thin scrollbars hidden inside cards (canvas already hides) */
+  .kf ::-webkit-scrollbar { width: 0; height: 0; }
+</style>
+</head>
+<body>
+<div id="root"></div>
+
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+
+<script type="text/babel" src="design-canvas.jsx"></script>
+<script type="text/babel" src="shared.jsx"></script>
+<script type="text/babel" src="pages/home.jsx"></script>
+<script type="text/babel" src="pages/player.jsx"></script>
+<script type="text/babel" src="pages/library.jsx"></script>
+<script type="text/babel" src="pages/discovery.jsx"></script>
+<script type="text/babel" src="pages/settings.jsx"></script>
+<script type="text/babel" src="app.jsx"></script>
+</body>
+</html>

@@ -1,0 +1,166 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ── Design tokens (D15) ───────────────────────────────────────────────
+   Ported from the Claude Design handoff ("Key Finder" glass system).
+   Dark is the default theme; `.light` overrides. shadcn semantic tokens
+   sit alongside the maximal-glass `--kf-*` tokens so both can be tuned
+   without rewrites. */
+@layer base {
+  :root,
+  .dark {
+    /* shadcn semantic tokens (dark) */
+    --background: 252 40% 4%;
+    --foreground: 252 30% 97%;
+    --card: 250 30% 8%;
+    --card-foreground: 252 30% 97%;
+    --popover: 250 30% 7%;
+    --popover-foreground: 252 30% 97%;
+    --primary: 280 90% 68%;
+    --primary-foreground: 252 40% 6%;
+    --secondary: 200 90% 62%;
+    --secondary-foreground: 252 40% 6%;
+    --muted: 250 18% 16%;
+    --muted-foreground: 252 12% 62%;
+    --accent: 330 88% 62%;
+    --accent-foreground: 252 40% 6%;
+    --destructive: 8 88% 62%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 0 0% 100%;
+    --input: 250 18% 18%;
+    --ring: 280 90% 68%;
+    --radius: 0.875rem;
+
+    /* Maximal-glass tokens (--kf-*) from the design handoff. */
+    --kf-ink: 255 255 255;          /* rgb */
+    --kf-ink-1: 0.94;               /* primary text opacity */
+    --kf-ink-2: 0.62;
+    --kf-ink-3: 0.40;
+    --kf-line: 255 255 255;         /* hairline rgb */
+    --kf-line-1: 0.10;
+    --kf-line-2: 0.16;
+    --kf-base: #07060e;             /* page base */
+    --kf-panel: #0a0912;            /* solid inset (logo, wheel center) */
+    --glass-blur: 34px;
+    --glass-blur-soft: 22px;
+    --glass-grad: linear-gradient(180deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.03));
+    --glass-grad-soft: linear-gradient(180deg, rgba(255, 255, 255, 0.07), rgba(255, 255, 255, 0.022));
+    --glass-shadow: 0 1px 0 rgba(255, 255, 255, 0.16) inset,
+      0 -1px 0 rgba(0, 0, 0, 0.25) inset, 0 24px 60px -20px rgba(0, 0, 0, 0.7);
+    --aurora-base: radial-gradient(120% 120% at 50% 0%, #0d0b1a 0%, #07060e 55%, #050409 100%);
+  }
+
+  .light {
+    --background: 250 40% 97%;
+    --foreground: 252 30% 10%;
+    --card: 0 0% 100%;
+    --card-foreground: 252 30% 10%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 252 30% 10%;
+    --primary: 280 78% 52%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 200 80% 45%;
+    --secondary-foreground: 0 0% 100%;
+    --muted: 250 20% 92%;
+    --muted-foreground: 252 10% 40%;
+    --accent: 330 78% 52%;
+    --accent-foreground: 0 0% 100%;
+    --destructive: 8 78% 52%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 252 20% 10%;
+    --input: 250 18% 86%;
+    --ring: 280 78% 52%;
+
+    --kf-ink: 18 16 32;
+    --kf-line: 18 16 32;
+    --kf-base: #eef0fb;
+    --kf-panel: #ffffff;
+    --glass-grad: linear-gradient(180deg, rgba(255, 255, 255, 0.78), rgba(255, 255, 255, 0.5));
+    --glass-grad-soft: linear-gradient(180deg, rgba(255, 255, 255, 0.6), rgba(255, 255, 255, 0.35));
+    --glass-shadow: 0 1px 0 rgba(255, 255, 255, 0.8) inset, 0 18px 50px -22px rgba(40, 30, 80, 0.35);
+    --aurora-base: radial-gradient(120% 120% at 50% 0%, #f3f1ff 0%, #eef0fb 55%, #e6e8f8 100%);
+  }
+
+  * {
+    border-color: hsl(var(--border) / 0.12);
+  }
+
+  body {
+    background-color: var(--kf-base);
+    color: rgb(var(--kf-ink) / var(--kf-ink-1, 0.94));
+    min-height: 100vh;
+    font-family: var(--font-sans), system-ui, sans-serif;
+    letter-spacing: -0.01em;
+    -webkit-font-smoothing: antialiased;
+  }
+}
+
+/* ── Glass surfaces ────────────────────────────────────────────────── */
+@layer components {
+  .kf-glass {
+    background: var(--glass-grad);
+    backdrop-filter: blur(var(--glass-blur)) saturate(1.45);
+    -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(1.45);
+    border: 1px solid rgb(var(--kf-line) / var(--kf-line-1, 0.1));
+    box-shadow: var(--glass-shadow);
+  }
+
+  .kf-glass-soft {
+    background: var(--glass-grad-soft);
+    backdrop-filter: blur(var(--glass-blur-soft)) saturate(1.3);
+    -webkit-backdrop-filter: blur(var(--glass-blur-soft)) saturate(1.3);
+    border: 1px solid rgb(var(--kf-line) / var(--kf-line-1, 0.1));
+    box-shadow: 0 1px 0 rgba(255, 255, 255, 0.1) inset;
+  }
+
+  .kf-mono {
+    font-family: var(--font-mono), ui-monospace, monospace;
+    font-feature-settings: "tnum" 1;
+  }
+}
+
+/* ── Animations (aurora drift, pulse, spin, eq bars) ───────────────── */
+@layer utilities {
+  .kf-aurora {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(70px);
+    opacity: 0.85;
+    pointer-events: none;
+    will-change: transform;
+    mix-blend-mode: screen;
+  }
+}
+
+@keyframes kfDrift1 {
+  0% { transform: translate(0, 0) scale(1); }
+  50% { transform: translate(60px, -40px) scale(1.18); }
+  100% { transform: translate(0, 0) scale(1); }
+}
+@keyframes kfDrift2 {
+  0% { transform: translate(0, 0) scale(1.1); }
+  50% { transform: translate(-70px, 50px) scale(0.92); }
+  100% { transform: translate(0, 0) scale(1.1); }
+}
+@keyframes kfDrift3 {
+  0% { transform: translate(0, 0) scale(1); }
+  50% { transform: translate(40px, 60px) scale(1.12); }
+  100% { transform: translate(0, 0) scale(1); }
+}
+@keyframes kfPulse {
+  0%, 100% { opacity: 0.55; transform: scale(1); }
+  50% { opacity: 0.95; transform: scale(1.06); }
+}
+@keyframes kfSpin { to { transform: rotate(360deg); } }
+@keyframes kfBars {
+  0%, 100% { transform: scaleY(0.35); }
+  50% { transform: scaleY(1); }
+}
+
+/* hide scrollbars inside glass cards (matches the design canvas) */
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-thumb {
+  background: rgb(var(--kf-line) / 0.18);
+  border-radius: 999px;
+}

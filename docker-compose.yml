@@ -1,0 +1,96 @@
+# Key Finder — local development orchestration.
+# One network; four dedicated containers (frontend, backend, worker, db).
+# `backend` and `worker` are separate containers from v1 (D36).
+
+services:
+  db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-keyfinder}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-keyfinder}
+      POSTGRES_DB: ${POSTGRES_DB:-keyfinder}
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-keyfinder} -d ${POSTGRES_DB:-keyfinder}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    networks:
+      - keyfinder
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    environment:
+      DATABASE_URL: ${DATABASE_URL:-postgresql+asyncpg://keyfinder:keyfinder@db:5432/keyfinder}
+      AUDIO_STORAGE_PATH: ${AUDIO_STORAGE_PATH:-/data/audio}
+      MAX_DURATION_SECONDS: ${MAX_DURATION_SECONDS:-1200}
+      QUEUE_CONCURRENCY: ${QUEUE_CONCURRENCY:-2}
+      YOUTUBE_API_KEY: ${YOUTUBE_API_KEY:-}
+    volumes:
+      - ./backend:/app
+      - audio_data:${AUDIO_STORAGE_PATH:-/data/audio}
+    ports:
+      - "8000:8000"
+    depends_on:
+      db:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request,sys; sys.exit(0) if urllib.request.urlopen('http://localhost:8000/api/health').status==200 else sys.exit(1)"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 15s
+    networks:
+      - keyfinder
+
+  worker:
+    build:
+      context: ./worker
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    environment:
+      DATABASE_URL: ${DATABASE_URL:-postgresql+asyncpg://keyfinder:keyfinder@db:5432/keyfinder}
+      AUDIO_STORAGE_PATH: ${AUDIO_STORAGE_PATH:-/data/audio}
+      MAX_DURATION_SECONDS: ${MAX_DURATION_SECONDS:-1200}
+      QUEUE_CONCURRENCY: ${QUEUE_CONCURRENCY:-2}
+    volumes:
+      - ./worker:/app
+      - audio_data:${AUDIO_STORAGE_PATH:-/data/audio}
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - keyfinder
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    environment:
+      NEXT_PUBLIC_API_BASE_URL: ${NEXT_PUBLIC_API_BASE_URL:-http://localhost:8000}
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+      - /app/.next
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend
+    networks:
+      - keyfinder
+
+volumes:
+  db_data:
+  audio_data:
+
+networks:
+  keyfinder:
+    driver: bridge
