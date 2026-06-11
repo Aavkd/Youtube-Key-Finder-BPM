@@ -1,0 +1,62 @@
+# Production — db + backend + worker only. Frontend is on Vercel.
+# Ports bound to 127.0.0.1: only cloudflared (on the host) can reach the backend.
+# No bind-mounts: code is baked into the images at build time.
+# Launch: docker compose -f docker-compose.prod.yml up -d --build
+
+services:
+  db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    networks: [keyfinder]
+
+  backend:
+    build: { context: ./backend, dockerfile: Dockerfile }
+    restart: unless-stopped
+    environment:
+      DATABASE_URL: ${DATABASE_URL}
+      AUDIO_STORAGE_PATH: ${AUDIO_STORAGE_PATH:-/data/audio}
+      MAX_DURATION_SECONDS: ${MAX_DURATION_SECONDS:-1200}
+      QUEUE_CONCURRENCY: ${QUEUE_CONCURRENCY:-2}
+      YOUTUBE_API_KEY: ${YOUTUBE_API_KEY:-}
+      APP_AUTH_TOKEN: ${APP_AUTH_TOKEN}
+      CORS_ALLOW_ORIGINS: ${CORS_ALLOW_ORIGINS}
+      CORS_ALLOW_ORIGIN_REGEX: ${CORS_ALLOW_ORIGIN_REGEX:-}
+    volumes:
+      - audio_data:${AUDIO_STORAGE_PATH:-/data/audio}
+    ports:
+      - "127.0.0.1:8000:8000"
+    depends_on:
+      db: { condition: service_healthy }
+    networks: [keyfinder]
+
+  worker:
+    build: { context: ./worker, dockerfile: Dockerfile }
+    restart: unless-stopped
+    environment:
+      DATABASE_URL: ${DATABASE_URL}
+      AUDIO_STORAGE_PATH: ${AUDIO_STORAGE_PATH:-/data/audio}
+      MAX_DURATION_SECONDS: ${MAX_DURATION_SECONDS:-1200}
+      QUEUE_CONCURRENCY: ${QUEUE_CONCURRENCY:-2}
+    volumes:
+      - audio_data:${AUDIO_STORAGE_PATH:-/data/audio}
+    depends_on:
+      db: { condition: service_healthy }
+    networks: [keyfinder]
+
+volumes:
+  db_data:
+  audio_data:
+
+networks:
+  keyfinder: { driver: bridge }

@@ -4,6 +4,7 @@ import * as React from "react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ThemeProvider } from "next-themes";
 
+import { AuthGate } from "@/components/auth-gate";
 import { JobsStream } from "@/components/jobs-stream";
 
 /**
@@ -33,8 +34,10 @@ export function Providers({ children }: { children: React.ReactNode }) {
       disableTransitionOnChange
     >
       <QueryClientProvider client={queryClient}>
-        <JobsStream />
-        {children}
+        <AuthGate>
+          <JobsStream />
+          {children}
+        </AuthGate>
       </QueryClientProvider>
     </ThemeProvider>
   );
