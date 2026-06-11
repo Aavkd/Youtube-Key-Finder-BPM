@@ -5,6 +5,7 @@ import { useQueryClient } from "@tanstack/react-query";
 
 import { API_BASE_URL, type Job } from "@/lib/api/client";
 import { queryKeys } from "@/lib/api/hooks";
+import { withToken } from "@/lib/auth";
 
 /**
  * Global Server-Sent Events subscriber for the processing queue (D33).
@@ -52,7 +53,7 @@ export function JobsStream() {
 
     const connect = () => {
       if (closed) return;
-      source = new EventSource(`${API_BASE_URL}/api/jobs/stream`);
+      source = new EventSource(withToken(`${API_BASE_URL}/api/jobs/stream`));
       source.addEventListener("jobs", (e) => {
         handleSnapshot((e as MessageEvent).data);
       });

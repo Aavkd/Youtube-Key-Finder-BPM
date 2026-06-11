@@ -7,6 +7,8 @@ progress channel, alongside the Phase 0 health endpoint.
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
+from app.auth import TokenAuthMiddleware
+from app.config import settings
 from app.routers import discovery, health, jobs, playlists, tags, tracks
 
 app = FastAPI(
@@ -15,12 +17,17 @@ app = FastAPI(
     description="Import, analyze (BPM + key), and manage instrumentals.",
 )
 
-# CORS: the frontend (browser) calls this API directly via
-# NEXT_PUBLIC_API_BASE_URL. Open in dev; tighten before production.
+# Middleware order: added first → runs last (after CORS), added last → runs first.
+# 1) Auth — added first so it executes after CORS handles preflight.
+app.add_middleware(TokenAuthMiddleware)
+
+# 2) CORS — added last so it executes first (handles OPTIONS preflight before auth).
+_origins = [o.strip() for o in settings.cors_allow_origins.split(",") if o.strip()]
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
-    allow_credentials=True,
+    allow_origins=_origins if _origins != ["*"] else ["*"],
+    allow_origin_regex=settings.cors_allow_origin_regex or None,
+    allow_credentials=False,  # token in header/query, no cookies
     allow_methods=["*"],
     allow_headers=["*"],
 )

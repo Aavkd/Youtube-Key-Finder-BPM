@@ -14,5 +14,14 @@ class Settings(BaseSettings):
     queue_concurrency: int = 2
     youtube_api_key: str = ""
 
+    # Shared secret protecting the entire API. Empty = auth disabled (local dev).
+    # In production: a strong random value (>= 32 bytes).
+    app_auth_token: str = ""
+
+    # CORS allowed origins, comma-separated. Use "*" for dev.
+    cors_allow_origins: str = "*"
+    # Optional regex for preview deploy URLs (e.g. "https://.*\\.vercel\\.app").
+    cors_allow_origin_regex: str = ""
+
 
 settings = Settings()
