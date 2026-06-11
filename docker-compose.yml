@@ -37,7 +37,7 @@ services:
       - ./backend:/app
       - audio_data:${AUDIO_STORAGE_PATH:-/data/audio}
     ports:
-      - "8000:8000"
+      - "8002:8000"
     depends_on:
       db:
         condition: service_healthy
@@ -75,7 +75,7 @@ services:
       dockerfile: Dockerfile
     restart: unless-stopped
     environment:
-      NEXT_PUBLIC_API_BASE_URL: ${NEXT_PUBLIC_API_BASE_URL:-http://localhost:8000}
+      NEXT_PUBLIC_API_BASE_URL: ${NEXT_PUBLIC_API_BASE_URL:-http://localhost:8002}
     volumes:
       - ./frontend:/app
       - /app/node_modules
