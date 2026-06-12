@@ -11,6 +11,7 @@ import {
   LayoutGrid,
   List,
   ListMusic,
+  Menu,
   MoreHorizontal,
   Pause,
   Pencil,
@@ -120,6 +121,8 @@ interface SidebarProps {
   favoritesCount: number;
   collapsed: boolean;
   onToggle: () => void;
+  mobile?: boolean;
+  onClose?: () => void;
 }
 
 function Sidebar({
@@ -130,6 +133,8 @@ function Sidebar({
   favoritesCount,
   collapsed,
   onToggle,
+  mobile = false,
+  onClose,
 }: SidebarProps) {
   const t = useTranslations("library");
   const createPlaylist = useCreatePlaylist();
@@ -151,14 +156,18 @@ function Sidebar({
     return () => document.removeEventListener("mousedown", onMouseDown);
   }, []);
 
-  const w = collapsed ? 62 : 224;
+  const effectiveCollapsed = mobile ? false : collapsed;
+  const w = effectiveCollapsed ? 62 : 224;
 
   return (
     <div
-      className="relative z-[3] flex-none flex flex-col border-r border-line overflow-hidden transition-all duration-200"
+      className={cn(
+        "relative z-[3] flex h-full flex-none flex-col overflow-hidden border-r border-line transition-all duration-200",
+        mobile && "w-full border-r-0",
+      )}
       style={{
-        width: w,
-        minWidth: w,
+        width: mobile ? "100%" : w,
+        minWidth: mobile ? 0 : w,
         background:
           "linear-gradient(180deg, rgba(255,255,255,0.04) 0%, rgba(255,255,255,0.02) 100%)",
         backdropFilter: "blur(20px)",
@@ -169,7 +178,7 @@ function Sidebar({
       <button
         type="button"
         onClick={onToggle}
-        className="flex items-center justify-end p-3 text-ink-subtle hover:text-ink transition-colors"
+        className={cn("items-center justify-end p-3 text-ink-subtle hover:text-ink transition-colors", mobile ? "hidden" : "flex")}
         title={collapsed ? "Expand sidebar" : "Collapse sidebar"}
       >
         {collapsed ? <ChevronRight size={15} /> : <ChevronLeft size={15} />}
@@ -182,21 +191,21 @@ function Sidebar({
           label={t("allTracks")}
           count={allCount}
           active={section === "all"}
-          collapsed={collapsed}
-          onClick={() => onSectionChange("all")}
+          collapsed={effectiveCollapsed}
+          onClick={() => { onSectionChange("all"); onClose?.(); }}
         />
         <SidebarItem
           icon={<Heart size={17} />}
           label={t("favorites")}
           count={favoritesCount}
           active={section === "favorites"}
-          collapsed={collapsed}
-          onClick={() => onSectionChange("favorites")}
+          collapsed={effectiveCollapsed}
+          onClick={() => { onSectionChange("favorites"); onClose?.(); }}
         />
       </div>
 
       {/* playlists divider */}
-      {!collapsed && (
+      {!effectiveCollapsed && (
         <div className="mx-4 my-3 flex items-center gap-2">
           <div className="flex-1 border-t border-line opacity-40" />
           <span className="kf-mono text-[9.5px] font-semibold tracking-[0.18em] text-ink-subtle">
@@ -205,13 +214,13 @@ function Sidebar({
           <div className="flex-1 border-t border-line opacity-40" />
         </div>
       )}
-      {collapsed && <div className="mx-3 my-2 border-t border-line opacity-25" />}
+      {effectiveCollapsed && <div className="mx-3 my-2 border-t border-line opacity-25" />}
 
       {/* playlist list */}
       <div className="flex flex-col gap-0.5 px-2 flex-1 overflow-y-auto">
         {playlists.map((pl) => (
           <div key={pl.id} className="group/pl relative flex items-center gap-1">
-            {renamingId === pl.id && !collapsed ? (
+            {renamingId === pl.id && !effectiveCollapsed ? (
               <div className="flex-1">
                 <PlaylistNameDialog
                   initial={pl.name}
@@ -225,7 +234,7 @@ function Sidebar({
             ) : (
               <>
                 <button
-                  onClick={() => onSectionChange(pl.id)}
+                  onClick={() => { onSectionChange(pl.id); onClose?.(); }}
                   className={cn(
                     "flex flex-1 items-center gap-2.5 rounded-[10px] px-2 py-2 text-[12.5px] transition-colors min-w-0",
                     section === pl.id
@@ -234,11 +243,11 @@ function Sidebar({
                   )}
                 >
                   <ListMusic size={15} className="flex-none" />
-                  {!collapsed && (
+                  {!effectiveCollapsed && (
                     <span className="truncate">{pl.name}</span>
                   )}
                 </button>
-                {!collapsed && (
+                {!effectiveCollapsed && (
                   <div className="relative flex-none" ref={playlistMenuId === pl.id ? menuRef : undefined}>
                     <button
                       onClick={(e) => {
@@ -279,7 +288,7 @@ function Sidebar({
         ))}
 
         {/* New playlist */}
-        {creating && !collapsed ? (
+        {creating && !effectiveCollapsed ? (
           <PlaylistNameDialog
             onSave={(name) => {
               createPlaylist.mutate(name);
@@ -294,7 +303,7 @@ function Sidebar({
             className="mt-1 flex items-center gap-2 rounded-[10px] px-2 py-2 text-[12px] text-ink-subtle hover:text-ink-muted transition-colors"
           >
             <Plus size={14} className="flex-none" />
-            {!collapsed && <span>{t("newPlaylist")}</span>}
+            {!effectiveCollapsed && <span>{t("newPlaylist")}</span>}
           </button>
         )}
       </div>
@@ -359,6 +368,7 @@ interface ToolbarProps {
   onFilterKey: (k: string) => void;
   view: "cards" | "list";
   onViewToggle: () => void;
+  onClear: () => void;
 }
 
 const SORT_FIELDS: { value: SortField; labelKey: string }[] = [
@@ -380,6 +390,7 @@ const COMMON_KEYS = [
 function Toolbar({
   search, onSearch, sort, order, onSort, onOrder,
   filterKey, onFilterKey, view, onViewToggle,
+  onClear,
 }: ToolbarProps) {
   const t = useTranslations("library");
   const [sortOpen, setSortOpen] = React.useState(false);
@@ -399,10 +410,10 @@ function Toolbar({
   const sortLabel = t(SORT_FIELDS.find((f) => f.value === sort)?.labelKey ?? "sortDate");
 
   return (
-    <div className="flex flex-wrap items-center gap-2">
+    <div className="grid grid-cols-2 gap-2 sm:flex sm:flex-wrap sm:items-center">
       {/* search */}
       <div
-        className="flex flex-1 min-w-[180px] items-center gap-2 rounded-[12px] px-3 py-2"
+        className="col-span-2 flex min-h-11 min-w-0 flex-1 items-center gap-2 rounded-[12px] px-3 py-2 sm:min-w-[180px]"
         style={{ background: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.1)" }}
       >
         <Search size={14} className="flex-none text-ink-subtle" />
@@ -421,19 +432,19 @@ function Toolbar({
       </div>
 
       {/* sort dropdown */}
-      <div ref={sortRef} className="relative">
+      <div ref={sortRef} className="relative min-w-0">
         <button
           type="button"
           onClick={() => { setSortOpen((v) => !v); setKeyOpen(false); }}
-          className="flex items-center gap-1.5 rounded-[12px] px-3 py-2 text-[12.5px] text-ink-muted hover:text-ink"
+          className="flex min-h-11 w-full items-center justify-center gap-1.5 rounded-[12px] px-2 py-2 text-[12.5px] text-ink-muted hover:text-ink sm:w-auto sm:px-3"
           style={{ background: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.1)" }}
         >
           <SlidersHorizontal size={13} />
-          <span>{t("sortBy")}: {sortLabel}</span>
+          <span className="truncate">{t("sortBy")}: {sortLabel}</span>
           <ChevronDown size={12} className={sortOpen ? "rotate-180 transition-transform" : "transition-transform"} />
         </button>
         {sortOpen && (
-          <GlassPanel className="absolute right-0 top-full mt-1 z-20 min-w-[200px] rounded-[14px] p-1.5">
+          <GlassPanel className="kf-bottom-sheet fixed inset-x-3 bottom-[calc(var(--kf-nav-mobile-h)+env(safe-area-inset-bottom)+12px)] z-40 rounded-[18px] p-2 sm:absolute sm:inset-x-auto sm:bottom-auto sm:right-0 sm:top-full sm:mt-1 sm:min-w-[200px] sm:rounded-[14px] sm:p-1.5">
             {SORT_FIELDS.map((f) => (
               <button
                 key={f.value}
@@ -467,12 +478,12 @@ function Toolbar({
       </div>
 
       {/* key filter */}
-      <div ref={keyRef} className="relative">
+      <div ref={keyRef} className="relative min-w-0">
         <button
           type="button"
           onClick={() => { setKeyOpen((v) => !v); setSortOpen(false); }}
           className={cn(
-            "flex items-center gap-1.5 rounded-[12px] px-3 py-2 text-[12.5px] hover:text-ink",
+            "flex min-h-11 w-full items-center justify-center gap-1.5 rounded-[12px] px-2 py-2 text-[12.5px] hover:text-ink sm:w-auto sm:px-3",
             filterKey ? "text-ink" : "text-ink-muted",
           )}
           style={{
@@ -484,7 +495,7 @@ function Toolbar({
           <ChevronDown size={12} />
         </button>
         {keyOpen && (
-          <GlassPanel className="absolute right-0 top-full mt-1 z-20 min-w-[200px] rounded-[14px] p-1.5 max-h-[280px] overflow-y-auto">
+          <GlassPanel className="kf-bottom-sheet fixed inset-x-3 bottom-[calc(var(--kf-nav-mobile-h)+env(safe-area-inset-bottom)+12px)] z-40 max-h-[60dvh] overflow-y-auto rounded-[18px] p-2 sm:absolute sm:inset-x-auto sm:bottom-auto sm:right-0 sm:top-full sm:mt-1 sm:min-w-[200px] sm:rounded-[14px] sm:p-1.5">
             <button
               onClick={() => { onFilterKey(""); setKeyOpen(false); }}
               className={cn("flex w-full items-center rounded-lg px-3 py-2 text-[12.5px] hover:bg-white/[0.06]",
@@ -508,13 +519,13 @@ function Toolbar({
 
       {/* view toggle */}
       <div
-        className="flex items-center overflow-hidden rounded-[12px]"
+        className="col-span-2 flex min-h-11 items-center overflow-hidden rounded-[12px] sm:col-span-1"
         style={{ background: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.1)" }}
       >
         <button
           type="button"
           onClick={() => view !== "cards" && onViewToggle()}
-          className={cn("flex items-center gap-1.5 px-3 py-2 text-[12.5px] transition-colors",
+          className={cn("flex flex-1 items-center justify-center gap-1.5 px-3 py-2 text-[12.5px] transition-colors sm:flex-none",
             view === "cards" ? "text-ink bg-white/[0.08]" : "text-ink-subtle hover:text-ink-muted")}
         >
           <LayoutGrid size={13} />
@@ -522,12 +533,22 @@ function Toolbar({
         <button
           type="button"
           onClick={() => view !== "list" && onViewToggle()}
-          className={cn("flex items-center gap-1.5 px-3 py-2 text-[12.5px] transition-colors",
+          className={cn("flex flex-1 items-center justify-center gap-1.5 px-3 py-2 text-[12.5px] transition-colors sm:flex-none",
             view === "list" ? "text-ink bg-white/[0.08]" : "text-ink-subtle hover:text-ink-muted")}
         >
           <List size={13} />
         </button>
       </div>
+      {(search || filterKey) && (
+        <button
+          type="button"
+          onClick={onClear}
+          className="col-span-2 min-h-11 rounded-[12px] px-3 text-[12.5px] text-ink-muted sm:col-span-1"
+          style={{ background: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.1)" }}
+        >
+          {t("clearFilters")}
+        </button>
+      )}
     </div>
   );
 }
@@ -561,18 +582,18 @@ function MiniPlayer({
 
   return (
     <div
-      className="absolute bottom-0 left-0 right-0 z-[10]"
+      className="fixed inset-x-0 bottom-[calc(var(--kf-nav-mobile-h)+env(safe-area-inset-bottom))] z-[30] lg:absolute lg:bottom-0"
       style={{ backdropFilter: "blur(30px)", WebkitBackdropFilter: "blur(30px)" }}
     >
       <GlassPanel
-        className="mx-4 mb-4 flex items-center gap-4 rounded-[18px] px-4 py-3"
+        className="mx-2 mb-2 grid grid-cols-[44px_minmax(0,1fr)_44px_44px] items-center gap-2 rounded-[16px] px-3 py-2 sm:mx-4 sm:mb-4 lg:flex lg:gap-4 lg:rounded-[18px] lg:px-4 lg:py-3"
         style={{
           boxShadow: `0 -4px 40px -8px rgba(0,0,0,0.6), 0 0 40px -20px ${m.glow}`,
           border: `1px solid ${m.primary}33`,
         }}
       >
         {/* thumbnail */}
-        <div className="flex-none w-10 h-10 rounded-lg overflow-hidden">
+        <div className="h-10 w-10 flex-none overflow-hidden rounded-lg">
           {track.thumbnail_url ? (
             // eslint-disable-next-line @next/next/no-img-element
             <img src={track.thumbnail_url} alt={title} className="h-full w-full object-cover" />
@@ -582,7 +603,7 @@ function MiniPlayer({
         </div>
 
         {/* info */}
-        <div className="flex-none w-[180px] min-w-0">
+        <div className="min-w-0 lg:w-[180px] lg:flex-none">
           <div className="truncate text-[13px] font-semibold text-ink">{title}</div>
           <div className="kf-mono text-[11px] text-ink-subtle">
             {track.key ?? "—"} · {track.bpm != null ? `${Math.round(track.bpm)} BPM` : "—"}
@@ -595,14 +616,14 @@ function MiniPlayer({
           onClick={player.playPause}
           disabled={!player.isReady}
           aria-label={player.isPlaying ? t("pause") : t("play")}
-          className="flex-none flex h-9 w-9 items-center justify-center rounded-full text-[#0a0912] disabled:opacity-50"
+          className="kf-touch-target flex-none rounded-full text-[#0a0912] disabled:opacity-50"
           style={{ background: `linear-gradient(135deg, ${m.primary}, ${m.accent})` }}
         >
           {player.isPlaying ? <Pause size={16} fill="currentColor" /> : <Play size={16} fill="currentColor" />}
         </button>
 
         {/* waveform */}
-        <div className="flex-1 min-w-0 flex flex-col gap-1">
+        <div className="col-span-4 row-start-2 hidden min-w-0 flex-1 flex-col gap-1 sm:flex lg:col-span-1 lg:row-auto">
           <div
             ref={player.containerRef}
             className="h-[30px] w-full cursor-pointer"
@@ -620,7 +641,7 @@ function MiniPlayer({
         </div>
 
         {/* time */}
-        <div className="flex-none flex flex-col items-end gap-0.5">
+        <div className="hidden flex-none flex-col items-end gap-0.5 lg:flex">
           <span className="kf-mono text-[11px]" style={{ color: m.primary }}>{fmtDur(pos)}</span>
           <span className="kf-mono text-[11px] text-ink-subtle">{fmtDur(dur)}</span>
         </div>
@@ -628,7 +649,7 @@ function MiniPlayer({
         {/* open in player link */}
         <Link
           href={`/player?track=${track.id}`}
-          className="flex-none rounded-lg px-2.5 py-1.5 text-[11.5px] font-medium text-ink-muted hover:text-ink transition-colors"
+          className="col-span-4 row-start-3 hidden min-h-10 flex-none items-center justify-center rounded-lg px-2.5 py-1.5 text-[11.5px] font-medium text-ink-muted transition-colors hover:text-ink sm:flex lg:col-span-1 lg:row-auto lg:min-h-0"
           style={{ background: "rgba(255,255,255,0.07)" }}
         >
           {t("openPlayer")}
@@ -639,7 +660,7 @@ function MiniPlayer({
           type="button"
           onClick={onClose}
           aria-label={t("closePlayer")}
-          className="flex-none flex h-7 w-7 items-center justify-center rounded-full text-ink-subtle hover:text-ink"
+          className="kf-touch-target flex-none rounded-full text-ink-subtle hover:text-ink"
           style={{ background: "rgba(255,255,255,0.07)" }}
         >
           <X size={14} />
@@ -654,7 +675,7 @@ function MiniPlayer({
 function ListHeader() {
   const t = useTranslations("library");
   return (
-    <div className="flex items-center gap-3 px-3 py-1.5 text-[11px] font-semibold tracking-widest text-ink-subtle kf-mono">
+    <div className="hidden items-center gap-3 px-3 py-1.5 text-[11px] font-semibold tracking-widest text-ink-subtle kf-mono lg:flex">
       <div className="w-7 flex-none" />
       <div className="w-9 flex-none" />
       <div className="flex-1">{t("sortTitle").toUpperCase()}</div>
@@ -712,6 +733,7 @@ export function LibraryView() {
   const [filterKey, setFilterKey] = React.useState("");
   const [section, setSection] = React.useState<Section>("all");
   const [activeTrackId, setActiveTrackId] = React.useState<string | null>(null);
+  const [mobileSectionsOpen, setMobileSectionsOpen] = React.useState(false);
 
   // Debounce search input
   React.useEffect(() => {
@@ -765,24 +787,58 @@ export function LibraryView() {
   const sectionTitle = getSectionTitle(section, playlists ?? [], t);
 
   return (
-    <div className="relative flex h-screen overflow-hidden">
+    <div className="kf-viewport relative flex overflow-hidden lg:h-screen">
       <Aurora blobs={BLOBS} />
 
       {/* Sidebar */}
-      <Sidebar
-        section={section}
-        onSectionChange={setSection}
-        playlists={playlists ?? []}
-        allCount={allCount}
-        favoritesCount={favoritesCount}
-        collapsed={sidebarCollapsed}
-        onToggle={toggleSidebar}
-      />
+      <div className="hidden lg:block">
+        <Sidebar
+          section={section}
+          onSectionChange={setSection}
+          playlists={playlists ?? []}
+          allCount={allCount}
+          favoritesCount={favoritesCount}
+          collapsed={sidebarCollapsed}
+          onToggle={toggleSidebar}
+        />
+      </div>
+
+      {mobileSectionsOpen && (
+        <>
+          <button
+            type="button"
+            aria-label={t("closeSections")}
+            onClick={() => setMobileSectionsOpen(false)}
+            className="fixed inset-0 z-40 bg-black/60 lg:hidden"
+          />
+          <div className="kf-bottom-sheet fixed inset-x-0 bottom-0 z-50 h-[min(78dvh,680px)] rounded-t-[24px] border-t border-line lg:hidden">
+            <div className="flex items-center justify-between border-b border-line px-4 py-3">
+              <span className="text-[15px] font-semibold text-ink">{t("sections")}</span>
+              <button type="button" onClick={() => setMobileSectionsOpen(false)} className="kf-touch-target rounded-full text-ink-muted">
+                <X size={18} />
+              </button>
+            </div>
+            <div className="h-[calc(100%-69px)]">
+              <Sidebar
+                section={section}
+                onSectionChange={setSection}
+                playlists={playlists ?? []}
+                allCount={allCount}
+                favoritesCount={favoritesCount}
+                collapsed={false}
+                onToggle={() => {}}
+                mobile
+                onClose={() => setMobileSectionsOpen(false)}
+              />
+            </div>
+          </div>
+        </>
+      )}
 
       {/* Main content */}
       <div className="relative z-[2] flex flex-1 flex-col min-w-0">
         {/* Page header */}
-        <div className="flex-none px-7 pt-7 pb-4">
+        <div className="flex-none px-4 pb-4 pt-5 sm:px-6 sm:pt-7 lg:px-7">
           <div className="mb-1 flex items-baseline gap-3">
             <span
               className="kf-mono text-[10.5px] font-semibold tracking-[0.22em]"
@@ -791,13 +847,24 @@ export function LibraryView() {
               {t("kicker")}
             </span>
           </div>
-          <div className="flex items-end gap-3 mb-5">
-            <h1 className="text-[28px] font-semibold tracking-[-0.02em] text-ink leading-tight">
-              {sectionTitle}
-            </h1>
-            <span className="kf-mono mb-[3px] text-[12px] text-ink-subtle">
-              {t("trackCount", { count: filteredTracks.length })}
-            </span>
+          <div className="mb-5 flex items-center gap-3">
+            <button
+              type="button"
+              onClick={() => setMobileSectionsOpen(true)}
+              className="kf-touch-target rounded-[12px] text-ink-muted lg:hidden"
+              style={{ background: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.1)" }}
+              aria-label={t("openSections")}
+            >
+              <Menu size={18} />
+            </button>
+            <div className="min-w-0">
+              <h1 className="truncate text-[26px] font-semibold leading-tight tracking-[-0.02em] text-ink sm:text-[28px]">
+                {sectionTitle}
+              </h1>
+              <span className="kf-mono text-[12px] text-ink-subtle">
+                {t("trackCount", { count: filteredTracks.length })}
+              </span>
+            </div>
           </div>
           <Toolbar
             search={searchInput}
@@ -810,13 +877,14 @@ export function LibraryView() {
             onFilterKey={setFilterKey}
             view={libraryView}
             onViewToggle={toggleLibraryView}
+            onClear={() => { setSearchInput(""); setFilterKey(""); }}
           />
         </div>
 
         {/* Track list / grid (scrollable) */}
         <div
-          className="flex-1 overflow-y-auto px-7"
-          style={{ paddingBottom: activeTrack ? 110 : 32 }}
+          className="kf-scrollable flex-1 px-4 sm:px-6 lg:px-7"
+          style={{ paddingBottom: activeTrack ? 190 : 32 }}
         >
           {isLoading ? (
             <div className="flex items-center justify-center py-24">
@@ -840,7 +908,7 @@ export function LibraryView() {
               }
             />
           ) : libraryView === "cards" ? (
-            <div className="grid gap-4" style={{ gridTemplateColumns: "repeat(auto-fill, minmax(220px, 1fr))" }}>
+            <div className="grid grid-cols-1 gap-4 min-[500px]:grid-cols-2 xl:grid-cols-[repeat(auto-fill,minmax(220px,1fr))]">
               {filteredTracks.map((track) => (
                 <TrackCard
                   key={track.id}

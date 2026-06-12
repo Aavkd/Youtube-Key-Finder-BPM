@@ -54,7 +54,7 @@ export function QueueRow({ job, track, onRetry, onDelete }: QueueRowProps) {
   return (
     <GlassPanel
       variant="soft"
-      className="relative flex items-center gap-3.5 overflow-hidden rounded-[14px] px-3.5 py-3"
+      className="relative grid grid-cols-[42px_minmax(0,1fr)] gap-x-3.5 gap-y-3 overflow-hidden rounded-[14px] px-3.5 py-3 sm:flex sm:items-center"
     >
       {/* thumb / status orb */}
       <div
@@ -95,7 +95,7 @@ export function QueueRow({ job, track, onRetry, onDelete }: QueueRowProps) {
 
       <div className="min-w-0 flex-1">
         <div className="flex items-center gap-2">
-          <span className="max-w-[230px] overflow-hidden text-ellipsis whitespace-nowrap text-[13.5px] font-semibold text-white">
+          <span className="line-clamp-2 text-left text-[13.5px] font-semibold text-white sm:max-w-[230px] sm:overflow-hidden sm:text-ellipsis sm:whitespace-nowrap">
             {title}
           </span>
         </div>
@@ -110,7 +110,7 @@ export function QueueRow({ job, track, onRetry, onDelete }: QueueRowProps) {
           </div>
         ) : (
           <>
-            <div className="mt-[3px] overflow-hidden text-ellipsis whitespace-nowrap text-[11.5px] text-ink-subtle">
+            <div className="mt-[3px] line-clamp-2 text-[11.5px] text-ink-subtle sm:overflow-hidden sm:text-ellipsis sm:whitespace-nowrap">
               {sub}
             </div>
             {showProgress && (
@@ -128,7 +128,7 @@ export function QueueRow({ job, track, onRetry, onDelete }: QueueRowProps) {
         )}
       </div>
 
-      <div className="flex flex-none items-center gap-2">
+      <div className="col-span-2 flex min-h-11 flex-none items-center justify-end gap-2 border-t border-line pt-2 sm:col-auto sm:min-h-0 sm:border-0 sm:pt-0">
         {showProgress && (
           <span className="kf-mono text-[12px] font-semibold text-ink-muted">
             {job.progress}%
@@ -140,7 +140,7 @@ export function QueueRow({ job, track, onRetry, onDelete }: QueueRowProps) {
               <button
                 type="button"
                 onClick={() => onRetry(job.id)}
-                className="flex items-center gap-1.5 rounded-[9px] px-[11px] py-1.5 text-[12px] font-semibold"
+                className="flex min-h-11 items-center gap-1.5 rounded-[9px] px-[11px] text-[12px] font-semibold"
                 style={{
                   border: "1px solid hsla(8 88% 62% / 0.4)",
                   background: "hsla(8 88% 62% / 0.14)",
@@ -155,7 +155,8 @@ export function QueueRow({ job, track, onRetry, onDelete }: QueueRowProps) {
                 type="button"
                 onClick={() => onDelete(job.id)}
                 title={t("deleteJob")}
-                className="flex items-center justify-center rounded-[9px] px-[9px] py-1.5"
+                aria-label={t("deleteJob")}
+                className="flex h-11 w-11 items-center justify-center rounded-[9px]"
                 style={{
                   border: "1px solid hsla(8 88% 62% / 0.25)",
                   background: "hsla(8 88% 62% / 0.08)",

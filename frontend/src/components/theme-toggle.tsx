@@ -22,7 +22,7 @@ export function ThemeToggle() {
       aria-label={t("theme")}
       title={t("theme")}
       onClick={() => setTheme(isDark ? "light" : "dark")}
-      className="flex h-[38px] w-[38px] items-center justify-center rounded-[11px] border border-line text-ink-muted transition-colors hover:text-ink"
+      className="flex h-11 w-11 items-center justify-center rounded-[11px] border border-line text-ink-muted transition-colors hover:text-ink lg:h-[38px] lg:w-[38px]"
     >
       {mounted && !isDark ? (
         <Sun size={17} strokeWidth={1.8} />

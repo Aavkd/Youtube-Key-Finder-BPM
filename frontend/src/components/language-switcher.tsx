@@ -23,14 +23,14 @@ export function LanguageSwitcher() {
   }
 
   return (
-    <div className="kf-mono flex flex-col overflow-hidden rounded-[11px] border border-line text-[11px] font-semibold">
+    <div className="kf-mono flex overflow-hidden rounded-[11px] border border-line text-[11px] font-semibold lg:flex-col">
       {locales.map((l) => (
         <button
           key={l}
           type="button"
           onClick={() => select(l)}
           className={cn(
-            "px-[9px] py-[6px] text-center transition-colors",
+            "min-h-[38px] min-w-[42px] px-[9px] py-[6px] text-center transition-colors",
             l === active
               ? "bg-white/90 text-[#0a0912]"
               : "text-ink-muted hover:text-ink",

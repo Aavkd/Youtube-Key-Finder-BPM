@@ -49,6 +49,10 @@
     --glass-shadow: 0 1px 0 rgba(255, 255, 255, 0.16) inset,
       0 -1px 0 rgba(0, 0, 0, 0.25) inset, 0 24px 60px -20px rgba(0, 0, 0, 0.7);
     --aurora-base: radial-gradient(120% 120% at 50% 0%, #0d0b1a 0%, #07060e 55%, #050409 100%);
+    --kf-nav-mobile-h: 68px;
+    --kf-page-pad-x: clamp(16px, 4vw, 40px);
+    --kf-page-pad-y: clamp(18px, 3vw, 30px);
+    --kf-touch-target: 44px;
   }
 
   .light {
@@ -90,9 +94,20 @@
     background-color: var(--kf-base);
     color: rgb(var(--kf-ink) / var(--kf-ink-1, 0.94));
     min-height: 100vh;
+    min-height: 100dvh;
+    overflow-x: hidden;
     font-family: var(--font-sans), system-ui, sans-serif;
     letter-spacing: -0.01em;
     -webkit-font-smoothing: antialiased;
+  }
+
+  html {
+    overflow-x: hidden;
+  }
+
+  :focus-visible {
+    outline: 2px solid hsl(var(--primary));
+    outline-offset: 3px;
   }
 }
 
@@ -117,6 +132,85 @@
   .kf-mono {
     font-family: var(--font-mono), ui-monospace, monospace;
     font-feature-settings: "tnum" 1;
+  }
+
+  .kf-app-shell,
+  .kf-viewport {
+    min-height: 100vh;
+    min-height: 100dvh;
+  }
+
+  .kf-app-main {
+    min-height: 100vh;
+    min-height: 100dvh;
+    overflow-x: clip;
+    padding-bottom: calc(var(--kf-nav-mobile-h) + env(safe-area-inset-bottom));
+  }
+
+  .kf-mobile-nav {
+    min-height: calc(var(--kf-nav-mobile-h) + env(safe-area-inset-bottom));
+    padding-bottom: env(safe-area-inset-bottom);
+    background: linear-gradient(180deg, rgba(15, 13, 25, 0.9), rgba(8, 7, 14, 0.98));
+    backdrop-filter: blur(24px) saturate(1.35);
+    -webkit-backdrop-filter: blur(24px) saturate(1.35);
+  }
+
+  .kf-bottom-sheet {
+    max-height: calc(100dvh - env(safe-area-inset-top) - 16px);
+    padding-bottom: max(20px, env(safe-area-inset-bottom));
+    overflow-y: auto;
+  }
+
+  @media (max-width: 639px) {
+    .kf-track-menu {
+      position: fixed !important;
+      inset: auto 12px calc(var(--kf-nav-mobile-h) + env(safe-area-inset-bottom) + 12px) 12px !important;
+      z-index: 60 !important;
+      width: auto !important;
+      min-width: 0 !important;
+      max-height: min(70dvh, 560px);
+      margin: 0 !important;
+      overflow-y: auto;
+      border-radius: 18px;
+      padding: 8px;
+    }
+
+    .kf-track-menu button,
+    .kf-track-menu a {
+      min-height: 44px;
+    }
+  }
+
+  .kf-scrollable {
+    overflow-y: auto;
+    overscroll-behavior-y: contain;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .kf-scroll-tabs {
+    scrollbar-width: none;
+  }
+
+  .kf-scroll-tabs::-webkit-scrollbar {
+    display: none;
+  }
+
+  .kf-touch-target {
+    min-width: var(--kf-touch-target);
+    min-height: var(--kf-touch-target);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    touch-action: manipulation;
+  }
+
+  @media (min-width: 1024px) {
+    .kf-app-main {
+      height: 100vh;
+      height: 100dvh;
+      overflow: hidden;
+      padding-bottom: 0;
+    }
   }
 }
 
@@ -163,4 +257,47 @@
 ::-webkit-scrollbar-thumb {
   background: rgb(var(--kf-line) / 0.18);
   border-radius: 999px;
+}
+
+@media (max-width: 639px) {
+  :root,
+  .dark {
+    --glass-blur: 22px;
+    --glass-blur-soft: 16px;
+  }
+
+  .kf-aurora {
+    filter: blur(52px);
+    opacity: 0.58 !important;
+  }
+}
+
+@media (hover: none) {
+  button,
+  a {
+    touch-action: manipulation;
+  }
+
+  .touch-visible {
+    opacity: 1 !important;
+  }
+
+  .touch-no-scale:hover {
+    transform: none !important;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+
+  .kf-aurora {
+    will-change: auto;
+  }
 }

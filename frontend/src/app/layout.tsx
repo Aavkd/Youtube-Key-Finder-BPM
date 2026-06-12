@@ -3,8 +3,7 @@ import { JetBrains_Mono, Space_Grotesk } from "next/font/google";
 import { NextIntlClientProvider } from "next-intl";
 import { getLocale, getMessages } from "next-intl/server";
 
-import { AuthGate } from "@/components/auth-gate";
-import { NavRail } from "@/components/nav-rail";
+import { AppShell } from "@/components/app-shell";
 import { Providers } from "@/components/providers";
 import "./globals.css";
 
@@ -47,14 +46,7 @@ export default async function RootLayout({
       <body>
         <NextIntlClientProvider locale={locale} messages={messages}>
           <Providers>
-            <AuthGate>
-              <div className="flex min-h-screen w-full">
-                <NavRail />
-                <main className="relative min-w-0 flex-1 overflow-hidden">
-                  {children}
-                </main>
-              </div>
-            </AuthGate>
+            <AppShell>{children}</AppShell>
           </Providers>
         </NextIntlClientProvider>
       </body>

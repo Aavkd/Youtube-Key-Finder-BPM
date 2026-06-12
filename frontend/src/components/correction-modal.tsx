@@ -70,23 +70,24 @@ export function CorrectionModal({ track, onClose }: CorrectionModalProps) {
         style={{ backdropFilter: "blur(6px)" }}
         onClick={onClose}
       />
-      <div className="fixed inset-0 z-50 flex items-center justify-center p-6 pointer-events-none">
+      <div className="fixed inset-0 z-50 flex items-end justify-center pointer-events-none md:items-center md:p-6">
         <GlassPanel
-          className="pointer-events-auto relative w-full max-w-[440px] rounded-[24px] p-7"
+          className="kf-bottom-sheet pointer-events-auto relative flex w-full max-w-[440px] flex-col rounded-t-[24px] p-0 md:max-h-[calc(100dvh-48px)] md:rounded-[24px]"
           style={{ boxShadow: "0 40px 80px -20px rgba(0,0,0,0.9)" }}
         >
           {/* header */}
-          <div className="flex items-center justify-between mb-6">
+          <div className="flex flex-none items-center justify-between border-b border-white/[0.07] px-5 py-4 md:px-7">
             <h2 className="text-[17px] font-semibold text-ink">{t("correctionTitle")}</h2>
             <button
               onClick={onClose}
-              className="flex h-8 w-8 items-center justify-center rounded-full text-ink-subtle hover:text-ink"
+              className="kf-touch-target rounded-full text-ink-subtle hover:text-ink"
               style={{ background: "rgba(255,255,255,0.07)" }}
             >
               <X size={16} />
             </button>
           </div>
 
+          <div className="kf-scrollable min-h-0 flex-1 px-5 py-5 md:px-7">
           {/* BPM */}
           <div className="mb-5">
             <label className="kf-mono mb-2 block text-[11px] font-semibold tracking-[0.15em] text-ink-subtle">
@@ -191,12 +192,14 @@ export function CorrectionModal({ track, onClose }: CorrectionModalProps) {
             )}
           </div>
 
+          </div>
+
           {/* Actions */}
-          <div className="flex items-center justify-end gap-2.5">
+          <div className="sticky bottom-0 flex flex-none items-center justify-end gap-2.5 border-t border-white/[0.07] bg-black/20 px-5 py-4 backdrop-blur-xl md:px-7">
             <button
               type="button"
               onClick={onClose}
-              className="rounded-[10px] px-4 py-2 text-[13.5px] font-medium text-ink-muted hover:text-ink transition-colors"
+              className="min-h-11 rounded-[10px] px-4 py-2 text-[13.5px] font-medium text-ink-muted hover:text-ink transition-colors"
               style={{ background: "rgba(255,255,255,0.06)" }}
             >
               {t("correctionCancel")}
@@ -205,7 +208,7 @@ export function CorrectionModal({ track, onClose }: CorrectionModalProps) {
               type="button"
               onClick={handleSave}
               disabled={update.isPending}
-              className="rounded-[10px] px-5 py-2 text-[13.5px] font-semibold text-[#0a0912] disabled:opacity-60"
+              className="min-h-11 rounded-[10px] px-5 py-2 text-[13.5px] font-semibold text-[#0a0912] disabled:opacity-60"
               style={{ background: "linear-gradient(120deg, #c084fc, #818cf8)" }}
             >
               {t("correctionSave")}

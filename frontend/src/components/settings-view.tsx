@@ -37,8 +37,8 @@ function SettingSection({
   children: React.ReactNode;
 }) {
   return (
-    <GlassPanel variant="soft" className="rounded-[20px]">
-      <div className="px-6 py-5">
+    <GlassPanel variant="soft" className="rounded-[18px] sm:rounded-[20px]">
+      <div className="px-4 py-4 sm:px-6 sm:py-5">
         <h2 className="mb-4 border-b border-white/[0.07] pb-3 text-[13px] font-semibold uppercase tracking-[0.15em] text-ink-muted">
           {title}
         </h2>
@@ -60,12 +60,12 @@ function SettingRow({
   column?: boolean;
 }) {
   return (
-    <div className={cn("flex gap-4", column ? "flex-col" : "items-center justify-between")}>
+    <div className={cn("flex flex-col gap-3 sm:gap-4", column ? "sm:flex-col" : "sm:flex-row sm:items-center sm:justify-between")}>
       <div className="min-w-0">
         <div className="text-[14px] text-ink">{label}</div>
         {desc && <div className="mt-0.5 text-[12.5px] leading-relaxed text-ink-subtle">{desc}</div>}
       </div>
-      <div className={cn("shrink-0", column && "w-full")}>{children}</div>
+      <div className={cn("min-w-0 w-full sm:w-auto sm:shrink-0", column && "sm:w-full")}>{children}</div>
     </div>
   );
 }
@@ -80,14 +80,14 @@ function OptionPills<T extends string>({
   onChange: (v: T) => void;
 }) {
   return (
-    <div className="flex overflow-hidden rounded-[11px] border border-white/[0.1]">
+    <div className="kf-scroll-tabs flex w-full overflow-x-auto rounded-[11px] border border-white/[0.1] sm:w-auto">
       {options.map((o) => (
         <button
           key={o.value}
           type="button"
           onClick={() => onChange(o.value)}
           className={cn(
-            "px-4 py-2 text-[13px] font-medium transition-colors",
+            "min-h-11 flex-1 whitespace-nowrap px-4 py-2 text-[13px] font-medium transition-colors sm:flex-none",
             o.value === value
               ? "bg-white/[0.14] text-white"
               : "text-ink-muted hover:bg-white/[0.06] hover:text-ink",
@@ -108,14 +108,14 @@ function Toggle({ checked, onChange }: { checked: boolean; onChange: (v: boolean
       aria-checked={checked}
       onClick={() => onChange(!checked)}
       className={cn(
-        "relative h-6 w-11 rounded-full transition-colors duration-200",
+        "relative h-7 w-12 rounded-full transition-colors duration-200",
         checked ? "bg-white/[0.28]" : "bg-white/[0.1]",
       )}
     >
       <span
         className={cn(
-          "absolute top-0.5 h-5 w-5 rounded-full bg-white shadow transition-transform duration-200",
-          checked ? "translate-x-[22px]" : "translate-x-0.5",
+          "absolute top-1 h-5 w-5 rounded-full bg-white shadow transition-transform duration-200",
+          checked ? "translate-x-[25px]" : "translate-x-1",
         )}
       />
     </button>
@@ -196,13 +196,13 @@ function PlaybackSection() {
 
 function KeyPreview({ preset }: { preset: MoodPreset }) {
   return (
-    <div className="flex flex-wrap gap-1.5">
+    <div className="grid grid-cols-3 gap-1.5 min-[420px]:grid-cols-4 sm:grid-cols-6">
       {FIFTHS_ORDER.map((key) => {
         const hue = presetKeyHue(preset, key);
         return (
           <div
             key={key}
-            className="flex h-7 min-w-[38px] items-center justify-center rounded-lg px-2 text-[11px] font-semibold text-white/90"
+            className="flex h-8 min-w-0 items-center justify-center rounded-lg px-2 text-[11px] font-semibold text-white/90"
             style={{ background: `hsl(${hue} 78% 50%)` }}
             title={`${key} → ${hue}°`}
           >
@@ -267,14 +267,14 @@ function MoodPresetEditor() {
     <div className="flex flex-col gap-4">
       {/* preset selector */}
       <SettingRow label={t("moodPreset")}>
-        <div className="flex overflow-hidden rounded-[11px] border border-white/[0.1]">
+        <div className="kf-scroll-tabs flex w-full overflow-x-auto rounded-[11px] border border-white/[0.1] sm:w-auto">
           {allPresets.map((p) => (
             <button
               key={p.id}
               type="button"
               onClick={() => setActiveMoodPresetId(p.id)}
               className={cn(
-                "px-3.5 py-2 text-[13px] font-medium transition-colors",
+                "min-h-11 flex-1 whitespace-nowrap px-3.5 py-2 text-[13px] font-medium transition-colors sm:flex-none",
                 p.id === activeMoodPresetId
                   ? "bg-white/[0.14] text-white"
                   : "text-ink-muted hover:bg-white/[0.06] hover:text-ink",
@@ -288,14 +288,14 @@ function MoodPresetEditor() {
 
       {/* anchor hue */}
       <SettingRow label={t("moodPresetAnchor")}>
-        <div className="flex items-center gap-3">
+        <div className="flex w-full items-center gap-3">
           <input
             type="range"
             min="0"
             max="359"
             value={draftAnchor}
             onChange={(e) => setDraftAnchor(Number(e.target.value))}
-            className="w-[160px] accent-white"
+            className="min-w-0 flex-1 accent-white sm:w-[160px] sm:flex-none"
             style={{
               background: `linear-gradient(to right, hsl(0,80%,55%) 0%, hsl(60,80%,55%) 17%, hsl(120,80%,55%) 33%, hsl(180,80%,55%) 50%, hsl(240,80%,55%) 67%, hsl(300,80%,55%) 83%, hsl(360,80%,55%) 100%)`,
               height: "6px",
@@ -334,7 +334,7 @@ function MoodPresetEditor() {
 
       {/* actions */}
       {isDirty && (
-        <div className="flex items-center gap-2.5">
+        <div className="flex flex-wrap items-center gap-2.5">
           {!isDefault && (
             <button
               type="button"
@@ -389,7 +389,7 @@ function MoodPresetEditor() {
 
       {/* delete custom preset */}
       {!isDefault && (
-        <div className="flex items-center justify-between border-t border-white/[0.06] pt-3">
+        <div className="flex flex-col gap-3 border-t border-white/[0.06] pt-3 sm:flex-row sm:items-center sm:justify-between">
           <span className="text-[12.5px] text-ink-subtle">
             {t("moodPresetDeleteHint", { name: activePreset.name })}
           </span>
@@ -553,7 +553,7 @@ function DiscoverySection() {
       <SettingRow label={t("linkedPlaylists")} desc={t("linkedPlaylistsDesc")} column>
         <div className="flex flex-col gap-3">
           {/* URL input */}
-          <div className="flex gap-2">
+          <div className="flex flex-col gap-2 min-[480px]:flex-row">
             <input
               type="url"
               value={inputUrl}
@@ -583,15 +583,15 @@ function DiscoverySection() {
               {linkedPlaylists.map((url) => (
                 <div
                   key={url}
-                  className="flex items-center gap-3 rounded-[11px] border border-white/[0.07] bg-white/[0.03] px-4 py-2.5"
+                  className="flex items-start gap-3 rounded-[11px] border border-white/[0.07] bg-white/[0.03] px-3 py-2.5 sm:px-4"
                 >
                   <Check size={13} className="shrink-0 text-green-400/80" />
-                  <span className="kf-mono min-w-0 flex-1 truncate text-[12.5px] text-ink-muted">{url}</span>
+                  <span className="kf-mono min-w-0 flex-1 break-words text-[12.5px] text-ink-muted [overflow-wrap:anywhere]">{url}</span>
                   <button
                     type="button"
                     onClick={() => removeLinkedPlaylist(url)}
                     aria-label={t("playlistRemove")}
-                    className="shrink-0 rounded-lg p-1 text-ink-subtle hover:text-ink"
+                    className="kf-touch-target shrink-0 rounded-lg text-ink-subtle hover:text-ink"
                   >
                     <Trash2 size={14} />
                   </button>
@@ -611,7 +611,7 @@ export function SettingsView() {
   const t = useTranslations("settings");
 
   return (
-    <div className="relative min-h-screen w-full">
+    <div className="kf-viewport relative w-full">
       <Aurora
         blobs={[
           { x: "20%", y: "-30%", size: 480, color: "hsl(280 65% 45%)", anim: "kfDrift1", dur: 32, opacity: 0.3 },
@@ -621,13 +621,13 @@ export function SettingsView() {
         speed={0.4}
       />
 
-      <div className="relative z-[2] mx-auto max-w-[760px] px-6 pb-24 pt-14">
+      <div className="relative z-[2] mx-auto max-w-[760px] px-4 pb-10 pt-8 sm:px-6 sm:pb-24 sm:pt-14">
         {/* page header */}
-        <div className="mb-10">
+        <div className="mb-7 sm:mb-10">
           <span className="kf-mono mb-2 block text-[11px] font-semibold tracking-[0.22em] text-ink-subtle">
             {t("kicker")}
           </span>
-          <h1 className="text-[42px] font-semibold leading-[1.06] tracking-[-0.025em] text-white">
+          <h1 className="text-[32px] font-semibold leading-[1.06] tracking-[-0.025em] text-ink sm:text-[42px]">
             {t("title")}
           </h1>
           <p className="mt-1.5 text-[15px] text-ink-muted">{t("subtitle")}</p>

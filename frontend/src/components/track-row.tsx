@@ -89,7 +89,7 @@ function RowMenu({ track, playlists, currentPlaylistId, onCorrect, onClose }: Ro
   return (
     <div ref={ref}>
       {step === "confirmDelete" ? (
-        <GlassPanel className="absolute right-0 top-full mt-1 z-20 min-w-[180px] rounded-[14px] p-3">
+        <GlassPanel className="kf-track-menu absolute right-0 top-full z-20 mt-1 min-w-[180px] rounded-[14px] p-3">
           <p className="text-[12.5px] text-ink-muted mb-3">{t("deleteTrack")}?</p>
           <div className="flex gap-2">
             <button
@@ -109,7 +109,7 @@ function RowMenu({ track, playlists, currentPlaylistId, onCorrect, onClose }: Ro
           </div>
         </GlassPanel>
       ) : step === "playlist" ? (
-        <GlassPanel className="absolute right-0 top-full mt-1 z-20 min-w-[200px] rounded-[14px] p-1.5">
+        <GlassPanel className="kf-track-menu absolute right-0 top-full z-20 mt-1 min-w-[200px] rounded-[14px] p-1.5">
           <p className="kf-mono px-3 py-1.5 text-[10.5px] text-ink-subtle tracking-widest">
             {t("addToPlaylist")}
           </p>
@@ -135,7 +135,7 @@ function RowMenu({ track, playlists, currentPlaylistId, onCorrect, onClose }: Ro
           </button>
         </GlassPanel>
       ) : step === "tags" ? (
-        <GlassPanel className="absolute right-0 top-full mt-1 z-20 min-w-[220px] rounded-[14px] p-1.5">
+        <GlassPanel className="kf-track-menu absolute right-0 top-full z-20 mt-1 min-w-[220px] rounded-[14px] p-1.5">
           <p className="kf-mono px-3 py-1.5 text-[10.5px] text-ink-subtle tracking-widest">
             {t("tagLabel")}
           </p>
@@ -183,7 +183,7 @@ function RowMenu({ track, playlists, currentPlaylistId, onCorrect, onClose }: Ro
           </button>
         </GlassPanel>
       ) : (
-        <GlassPanel className="absolute right-0 top-full mt-1 z-20 min-w-[200px] rounded-[14px] p-1.5">
+        <GlassPanel className="kf-track-menu absolute right-0 top-full z-20 mt-1 min-w-[200px] rounded-[14px] p-1.5">
           <Link
             href={`/player?track=${track.id}`}
             onClick={onClose}
@@ -282,7 +282,7 @@ export function TrackRow({
     <>
       <div
         className={cn(
-          "group flex items-center gap-3 rounded-[14px] px-3 py-2.5 transition-colors",
+          "group grid grid-cols-[44px_minmax(0,1fr)_44px] items-center gap-2 rounded-[14px] px-2 py-2.5 transition-colors lg:flex lg:gap-3 lg:px-3",
           isActive
             ? "bg-white/[0.08]"
             : "hover:bg-white/[0.04]",
@@ -290,11 +290,11 @@ export function TrackRow({
         style={isActive ? { boxShadow: `inset 0 0 0 1px ${m.primary}33` } : undefined}
       >
         {/* index / play button */}
-        <div className="w-7 flex-none flex items-center justify-center">
+        <div className="flex w-11 flex-none items-center justify-center lg:w-7">
           <button
             type="button"
             onClick={() => onPlay(track.id)}
-            className="flex items-center justify-center w-6 h-6 rounded-full text-ink-subtle hover:text-ink transition-colors opacity-0 group-hover:opacity-100"
+            className="touch-visible kf-touch-target rounded-full text-ink-subtle opacity-0 transition-colors group-hover:opacity-100 hover:text-ink"
             aria-label={isPlaying ? t("pause") : t("play")}
           >
             {isActive && isPlaying ? (
@@ -304,7 +304,7 @@ export function TrackRow({
             )}
           </button>
           {!isActive && (
-            <span className="kf-mono text-[11px] text-ink-subtle group-hover:hidden">
+            <span className="kf-mono hidden text-[11px] text-ink-subtle group-hover:hidden lg:inline">
               {index + 1}
             </span>
           )}
@@ -314,7 +314,7 @@ export function TrackRow({
         </div>
 
         {/* thumbnail */}
-        <div className="flex-none w-9 h-9 rounded-lg overflow-hidden">
+        <div className="hidden h-9 w-9 flex-none overflow-hidden rounded-lg lg:block">
           {track.thumbnail_url ? (
             // eslint-disable-next-line @next/next/no-img-element
             <img src={track.thumbnail_url} alt={title} className="h-full w-full object-cover" />
@@ -327,7 +327,7 @@ export function TrackRow({
         </div>
 
         {/* title + tags */}
-        <div className="flex-1 min-w-0">
+        <div className="min-w-0 lg:flex-1">
           <div className="flex items-center gap-2">
             <span className="truncate text-[13.5px] font-medium text-ink">{title}</span>
             {(track.bpm_manual || track.key_manual) && (
@@ -337,6 +337,16 @@ export function TrackRow({
               >
                 {t("manualBadge")}
               </span>
+            )}
+          </div>
+          <div className="mt-1.5 flex flex-wrap items-center gap-2 lg:hidden">
+            {track.key && <KeyChip keyName={track.key} bpm={track.bpm} size="sm" />}
+            <span className="kf-mono text-[11.5px] text-ink-muted">{bpmDisplay} BPM</span>
+            <span className="kf-mono text-[11.5px] text-ink-subtle">
+              {track.duration_sec != null ? fmtDur(track.duration_sec) : "—"}
+            </span>
+            {track.bpm_confidence != null && (
+              <Confidence value={Math.min(track.bpm_confidence ?? 0, track.key_confidence ?? 1)} compact />
             )}
           </div>
           {track.tags.length > 0 && (
@@ -355,17 +365,17 @@ export function TrackRow({
         </div>
 
         {/* key */}
-        <div className="flex-none w-[110px]">
+        <div className="hidden w-[110px] flex-none lg:block">
           {track.key && <KeyChip keyName={track.key} bpm={track.bpm} size="sm" />}
         </div>
 
         {/* BPM */}
-        <div className="flex-none w-[62px] text-right">
+        <div className="hidden w-[62px] flex-none text-right lg:block">
           <span className="kf-mono text-[12.5px] text-ink-muted">{bpmDisplay}</span>
         </div>
 
         {/* confidence */}
-        <div className="flex-none w-[76px] flex justify-center">
+        <div className="hidden w-[76px] flex-none justify-center lg:flex">
           {track.bpm_confidence != null && (
             <Confidence
               value={Math.min(track.bpm_confidence ?? 0, track.key_confidence ?? 1)}
@@ -375,18 +385,18 @@ export function TrackRow({
         </div>
 
         {/* duration */}
-        <div className="flex-none w-[48px] text-right">
+        <div className="hidden w-[48px] flex-none text-right lg:block">
           <span className="kf-mono text-[11.5px] text-ink-subtle">
             {track.duration_sec != null ? fmtDur(track.duration_sec) : "—"}
           </span>
         </div>
 
         {/* actions */}
-        <div className="flex-none flex items-center gap-1">
+        <div className="flex flex-none items-center justify-end gap-1">
           <button
             type="button"
             onClick={toggleFavorite}
-            className="flex h-7 w-7 items-center justify-center rounded-lg opacity-0 group-hover:opacity-100 transition-opacity"
+            className="touch-visible kf-touch-target hidden rounded-lg opacity-0 transition-opacity group-hover:opacity-100 sm:flex"
             style={{ background: "rgba(255,255,255,0.06)" }}
           >
             <Heart
@@ -401,7 +411,7 @@ export function TrackRow({
             rel="noreferrer"
             onClick={(e) => e.stopPropagation()}
             title={t("openYoutube")}
-            className="flex h-7 w-7 items-center justify-center rounded-lg opacity-0 group-hover:opacity-100 transition-opacity"
+            className="touch-visible kf-touch-target hidden rounded-lg opacity-0 transition-opacity group-hover:opacity-100 lg:flex"
             style={{ background: "rgba(255,255,255,0.06)", color: "rgba(255,255,255,0.45)" }}
           >
             <ExternalLink size={12} />
@@ -411,7 +421,7 @@ export function TrackRow({
               href={trackDownloadUrl(track.id, "wav")}
               title={t("download")}
               onClick={(e) => e.stopPropagation()}
-              className="flex h-7 w-7 items-center justify-center rounded-lg opacity-0 group-hover:opacity-100 transition-opacity"
+              className="touch-visible kf-touch-target hidden rounded-lg opacity-0 transition-opacity group-hover:opacity-100 lg:flex"
               style={{ background: "rgba(255,255,255,0.06)", color: "rgba(255,255,255,0.45)" }}
             >
               <Download size={12} />
@@ -421,7 +431,9 @@ export function TrackRow({
             <button
               type="button"
               onClick={(e) => { e.stopPropagation(); setMenuOpen((v) => !v); }}
-              className="flex h-7 w-7 items-center justify-center rounded-lg text-ink-subtle hover:text-ink opacity-0 group-hover:opacity-100 transition-opacity"
+              aria-label={t("trackActions")}
+              aria-expanded={menuOpen}
+              className="touch-visible kf-touch-target rounded-lg text-ink-subtle opacity-0 transition-opacity group-hover:opacity-100 hover:text-ink"
               style={{ background: "rgba(255,255,255,0.06)" }}
             >
               <MoreHorizontal size={14} />

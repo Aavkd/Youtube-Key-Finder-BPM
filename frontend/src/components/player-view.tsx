@@ -129,10 +129,7 @@ function PlayerCard({ track }: { track: Track }) {
   const title = track.title ?? t("untitled");
 
   return (
-    <div
-      className="relative flex h-full min-h-screen w-full flex-col"
-      style={{ overflow: "hidden" }}
-    >
+    <div className="kf-viewport relative flex w-full flex-col overflow-x-hidden lg:h-full lg:overflow-hidden">
       <Aurora
         blobs={blobs}
         speed={speed}
@@ -140,17 +137,17 @@ function PlayerCard({ track }: { track: Track }) {
       />
 
       {/* top bar */}
-      <div className="relative z-[2] flex items-center px-[34px] py-[22px]">
+      <div className="relative z-[2] flex flex-wrap items-center gap-3 px-4 py-4 sm:px-6 lg:px-[34px] lg:py-[22px]">
         <Link
           href="/"
-          className="kf-glass-soft flex items-center gap-2 rounded-full py-2 pl-[11px] pr-3.5 text-[13.5px] font-medium text-ink-muted"
+          className="kf-glass-soft kf-touch-target flex items-center gap-2 rounded-full px-3.5 text-[13.5px] font-medium text-ink-muted"
         >
           <ChevronLeft size={16} /> {t("backHome")}
         </Link>
         <div className="flex-1" />
-        <div className="flex items-center gap-2 text-[12.5px] text-ink-subtle">
+        <div className="flex min-w-0 items-center gap-2 text-[11.5px] text-ink-subtle sm:text-[12.5px]">
           <Sparkles size={14} style={{ color: m.primary }} />
-          {t("moodFrom")}{" "}
+          <span className="hidden sm:inline">{t("moodFrom")}</span>
           <span style={{ color: m.primary, fontWeight: 600 }}>
             {t(`label_${m.label}`)} {m.hue}&deg;
           </span>
@@ -158,17 +155,17 @@ function PlayerCard({ track }: { track: Track }) {
       </div>
 
       {/* result card */}
-      <div className="relative z-[2] flex flex-1 items-center justify-center px-10 pb-6">
+      <div className="relative z-[2] flex flex-1 items-start justify-center px-4 pb-6 sm:px-6 lg:items-center lg:px-10">
         <GlassPanel
-          className="flex w-[1000px] max-w-full gap-[26px] rounded-[30px] p-[22px]"
+          className="flex w-[1000px] max-w-full flex-col gap-6 rounded-[24px] p-4 sm:p-[22px] lg:flex-row lg:gap-[26px] lg:rounded-[30px]"
           style={{
             boxShadow: `0 40px 110px -30px rgba(0,0,0,0.9), 0 0 90px -30px ${m.glow}`,
           }}
         >
           {/* artwork */}
-          <div className="relative w-[320px] flex-none">
+          <div className="relative mx-auto w-full max-w-[360px] flex-none lg:mx-0 lg:w-[320px]">
             <div
-              className="relative h-[320px] w-[320px] overflow-hidden rounded-[22px]"
+              className="relative aspect-square w-full overflow-hidden rounded-[18px] sm:rounded-[22px]"
               style={{ border: "1px solid var(--kf-line-2, rgba(255,255,255,0.16))" }}
             >
               {track.thumbnail_url ? (
@@ -213,7 +210,7 @@ function PlayerCard({ track }: { track: Track }) {
                     aria-label={player.isPlaying ? t("pause") : t("play")}
                   >
                     <span
-                      className="flex h-[86px] w-[86px] items-center justify-center rounded-full text-white"
+                      className="flex h-[78px] w-[78px] items-center justify-center rounded-full text-white sm:h-[86px] sm:w-[86px]"
                       style={{
                         background: "rgba(10,9,18,0.42)",
                         backdropFilter: "blur(8px)",
@@ -262,10 +259,10 @@ function PlayerCard({ track }: { track: Track }) {
               />
               {t("justAnalyzed")}
             </div>
-            <h1 className="m-0 mb-[3px] mt-2.5 text-[34px] font-semibold leading-[1.05] tracking-[-0.02em] text-white">
+            <h1 className="m-0 mb-[3px] mt-2.5 text-[clamp(26px,8vw,34px)] font-semibold leading-[1.08] tracking-[-0.02em] text-ink [overflow-wrap:anywhere]">
               {title}
             </h1>
-            <div className="flex items-center gap-2.5 text-[13.5px] text-ink-muted">
+            <div className="flex flex-wrap items-center gap-2.5 text-[13.5px] text-ink-muted">
               <span className="kf-mono">{fmtDur(dur)}</span>
               <span className="opacity-40">&middot;</span>
               <a
@@ -279,7 +276,7 @@ function PlayerCard({ track }: { track: Track }) {
             </div>
 
             {/* big readouts */}
-            <div className="mt-[22px] flex gap-3.5">
+            <div className="mt-[22px] grid grid-cols-1 gap-3.5 min-[360px]:grid-cols-2">
               <Readout
                 label={t("bpm")}
                 value={track.bpm != null ? `${track.bpm}` : "--"}
@@ -312,7 +309,7 @@ function PlayerCard({ track }: { track: Track }) {
                 <>
                   <div
                     ref={player.containerRef}
-                    className="h-[44px] w-full cursor-pointer"
+                    className="h-[56px] w-full cursor-pointer py-1"
                     role="slider"
                     aria-label={t("seek")}
                     aria-valuenow={Math.round(pos)}
@@ -337,7 +334,7 @@ function PlayerCard({ track }: { track: Track }) {
             </div>
 
             {/* controls */}
-            <div className="mt-[18px] flex items-center gap-3.5">
+            <div className="mt-[18px] flex flex-wrap items-center gap-3.5">
               {playbackEnabled && (
                 <button
                   type="button"
@@ -357,13 +354,13 @@ function PlayerCard({ track }: { track: Track }) {
                   )}
                 </button>
               )}
-              <div className="flex-1" />
+              <div className="hidden flex-1 min-[480px]:block" />
               <DownloadButton track={track} mood={m} defaultFormat={defaultExportFormat} />
             </div>
 
-            <div className="kf-mono mt-3 flex items-center gap-[7px] text-[11.5px] text-ink-subtle">
+            <div className="kf-mono mt-3 flex min-w-0 items-start gap-[7px] text-[11.5px] text-ink-subtle">
               <Download size={12} />
-              <span className="text-ink-muted">
+              <span className="min-w-0 break-words text-ink-muted [overflow-wrap:anywhere]">
                 [{track.bpm != null ? Math.round(track.bpm) : "--"}][
                 {track.key ? keyAbbrev(track.key) : "--"}] {title}.wav
               </span>
@@ -386,7 +383,7 @@ interface ReadoutProps {
 
 function Readout({ label, value, conf, alt, mono, chip }: ReadoutProps) {
   return (
-    <GlassPanel variant="soft" className="flex-1 rounded-[18px] px-[17px] py-[15px]">
+    <GlassPanel variant="soft" className="min-w-0 flex-1 rounded-[18px] px-[15px] py-[15px] sm:px-[17px]">
       <div className="flex items-center justify-between">
         <span className="kf-mono text-[10.5px] font-semibold tracking-[0.18em] text-ink-subtle">
           {label}
@@ -407,11 +404,11 @@ function Readout({ label, value, conf, alt, mono, chip }: ReadoutProps) {
           </div>
         )}
       </div>
-      <div className="mt-3 flex items-center gap-2">
+      <div className="mt-3 flex min-w-0 flex-wrap items-center gap-2">
         <span className="text-[11.5px] text-ink-subtle">{"alt"}</span>
         {alt ? (
           <span
-            className="inline-flex items-center gap-1.5 rounded-lg border px-[9px] py-1 text-[11.5px] font-semibold text-ink-muted"
+            className="inline-flex min-w-0 flex-wrap items-center gap-1.5 rounded-lg border px-[9px] py-1 text-[11.5px] font-semibold text-ink-muted"
             style={{ background: "rgba(255,255,255,0.05)", borderColor: "rgba(255,255,255,0.1)" }}
           >
             <span className="kf-mono">{alt.text}</span>
@@ -454,14 +451,14 @@ function DownloadButton({
   }
 
   return (
-    <div ref={ref} className="relative">
+    <div ref={ref} className="relative w-full min-[480px]:w-auto">
       <div
-        className="flex items-stretch overflow-hidden rounded-[14px]"
+        className="flex w-full items-stretch overflow-hidden rounded-[14px]"
         style={{ boxShadow: `0 12px 30px -10px ${m.glow}` }}
       >
         <a
           href={trackDownloadUrl(track.id, defaultFormat)}
-          className="flex items-center gap-[9px] px-5 py-3.5 text-[14.5px] font-semibold text-[#0a0912]"
+          className="flex min-h-12 flex-1 items-center justify-center gap-[9px] px-5 py-3.5 text-[14.5px] font-semibold text-[#0a0912]"
           style={{ background: `linear-gradient(120deg, ${m.primary}, ${m.accent})` }}
         >
           <Download size={17} strokeWidth={2.3} /> {t("downloadFormat", { format: defaultFormat.toUpperCase() })}
@@ -477,13 +474,13 @@ function DownloadButton({
         </button>
       </div>
       {open && (
-        <GlassPanel className="absolute bottom-[calc(100%+8px)] right-0 z-10 w-[150px] overflow-hidden rounded-[12px] p-1">
+        <GlassPanel className="kf-bottom-sheet fixed inset-x-3 bottom-[calc(var(--kf-nav-mobile-h)+env(safe-area-inset-bottom)+12px)] z-40 overflow-hidden rounded-[18px] p-2 min-[480px]:absolute min-[480px]:inset-x-auto min-[480px]:bottom-[calc(100%+8px)] min-[480px]:right-0 min-[480px]:w-[170px] min-[480px]:rounded-[12px] min-[480px]:p-1">
           {(["wav", "mp3"] as const).map((fmt) => (
             <a
               key={fmt}
               href={trackDownloadUrl(track.id, fmt)}
               onClick={() => setOpen(false)}
-              className="flex items-center gap-2 rounded-lg px-3 py-2 text-[13px] text-ink-muted hover:bg-white/[0.06] hover:text-ink"
+              className="flex min-h-11 items-center gap-2 rounded-lg px-3 py-2 text-[13px] text-ink-muted hover:bg-white/[0.06] hover:text-ink"
             >
               <Download size={13} /> {t("downloadFormat", { format: fmt.toUpperCase() })}
             </a>
@@ -497,7 +494,7 @@ function DownloadButton({
 function EmptyState({ message }: { message: string }) {
   const t = useTranslations("player");
   return (
-    <div className="relative flex h-full min-h-screen w-full flex-col items-center justify-center px-10 text-center">
+    <div className="kf-viewport relative flex w-full flex-col items-center justify-center px-4 py-10 text-center sm:px-10">
       <Aurora
         blobs={[
           { x: "20%", y: "10%", size: 480, color: "hsl(280 85% 58%)", anim: "kfDrift1", dur: 18, opacity: 0.5 },
@@ -509,7 +506,7 @@ function EmptyState({ message }: { message: string }) {
         <p className="max-w-[420px] text-[16px] text-ink-muted">{message}</p>
         <Link
           href="/"
-          className="kf-glass-soft rounded-full px-5 py-2.5 text-[14px] font-semibold text-ink"
+          className="kf-glass-soft kf-touch-target rounded-full px-5 text-[14px] font-semibold text-ink"
         >
           {t("goHome")}
         </Link>
@@ -520,7 +517,7 @@ function EmptyState({ message }: { message: string }) {
 
 function LoadingState() {
   return (
-    <div className="relative flex h-full min-h-screen w-full items-center justify-center">
+    <div className="kf-viewport relative flex w-full items-center justify-center">
       <Aurora
         blobs={[
           { x: "20%", y: "10%", size: 480, color: "hsl(280 85% 58%)", anim: "kfDrift1", dur: 18, opacity: 0.4 },

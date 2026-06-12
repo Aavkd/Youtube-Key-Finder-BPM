@@ -121,12 +121,12 @@ export default function HomePage() {
   };
 
   return (
-    <div className="relative flex h-full min-h-screen w-full flex-col">
+    <div className="kf-viewport relative flex w-full flex-col">
       <Aurora blobs={blobs} />
 
       {/* faint circle-of-fifths motif */}
       <div
-        className="pointer-events-none absolute -right-40 -top-40 h-[620px] w-[620px] animate-spin-slow rounded-full"
+        className="pointer-events-none absolute -right-40 -top-40 hidden h-[620px] w-[620px] animate-spin-slow rounded-full sm:block"
         style={{ border: "1px solid rgba(255,255,255,0.05)" }}
       >
         {Array.from({ length: 12 }).map((_, i) => (
@@ -144,7 +144,7 @@ export default function HomePage() {
       </div>
 
       {/* top bar */}
-      <div className="relative z-[2] flex items-center px-[34px] py-[22px]">
+      <div className="relative z-[2] flex items-center px-4 py-4 sm:px-[34px] sm:py-[22px]">
         <div className="kf-mono text-[12px] font-semibold tracking-[0.22em] text-ink-subtle">
           KEY&nbsp;FINDER
         </div>
@@ -153,16 +153,16 @@ export default function HomePage() {
           type="button"
           onClick={cycleMode}
           title={t("backgroundCycle")}
-          className="kf-glass-soft flex items-center gap-2.5 rounded-full px-3.5 py-2"
+          className="kf-glass-soft kf-touch-target flex max-w-[70%] items-center gap-2 rounded-full px-3 sm:max-w-none sm:gap-2.5 sm:px-3.5"
         >
           <Sparkles size={14} style={{ color: "hsl(280 85% 70%)" }} />
-          <span className="text-[12.5px] font-medium text-ink-muted">
+          <span className="hidden text-[12.5px] font-medium text-ink-muted min-[390px]:inline">
             {t("background")}
           </span>
-          <span className="text-[12.5px] font-semibold text-ink">
+          <span className="truncate text-[11.5px] font-semibold text-ink sm:text-[12.5px]">
             {t(`backgroundMode_${homeBackgroundMode}`)}
           </span>
-          <span className="ml-0.5 flex gap-[3px]">
+          <span className="ml-0.5 hidden gap-[3px] min-[390px]:flex">
             {blobs.slice(0, 4).map((b, i) => (
               <span
                 key={i}
@@ -175,15 +175,15 @@ export default function HomePage() {
       </div>
 
       {/* hero */}
-      <div className="relative z-[2] -mt-2.5 flex flex-1 flex-col items-center justify-center px-10 text-center">
-        <div className="kf-mono mb-5 flex items-center gap-3.5 text-[12.5px] font-semibold tracking-[0.34em] text-ink-muted">
+      <div className="relative z-[2] flex flex-col items-center justify-center px-4 py-8 text-center sm:-mt-2.5 sm:flex-1 sm:px-10 sm:py-10">
+        <div className="kf-mono mb-5 flex flex-wrap items-center justify-center gap-x-3.5 gap-y-1 text-[11px] font-semibold tracking-[0.24em] text-ink-muted sm:text-[12.5px] sm:tracking-[0.34em]">
           <span>{t("kickerPaste")}</span>
           <span className="opacity-40">→</span>
           <span>{t("kickerDownload")}</span>
           <span className="opacity-40">→</span>
           <span>{t("kickerAnalyze")}</span>
         </div>
-        <h1 className="m-0 text-[58px] font-semibold leading-[1.02] tracking-[-0.03em] text-ink">
+        <h1 className="m-0 text-[clamp(36px,11vw,58px)] font-semibold leading-[1.02] tracking-[-0.03em] text-ink">
           {t("titleLine1")}
           <br />
           <span
@@ -198,33 +198,35 @@ export default function HomePage() {
             {t("titleLine2")}
           </span>
         </h1>
-        <p className="mx-auto mb-9 mt-[18px] max-w-[520px] text-[16.5px] leading-[1.5] text-ink-muted">
+        <p className="mx-auto mb-7 mt-[18px] max-w-[520px] text-[15px] leading-[1.5] text-ink-muted sm:mb-9 sm:text-[16.5px]">
           {t("subtitle")}
         </p>
 
         {/* the pill */}
-        <form onSubmit={handleSubmit} className="w-[760px] max-w-[92%]">
+        <form onSubmit={handleSubmit} className="w-full max-w-[760px]">
           <GlassPanel
-            className="flex items-center gap-3.5 rounded-full py-[11px] pl-6 pr-3"
+            className="flex flex-col gap-3 rounded-[22px] p-3 sm:flex-row sm:items-center sm:gap-3.5 sm:rounded-full sm:py-[11px] sm:pl-6 sm:pr-3"
             style={{
               boxShadow:
                 "0 30px 80px -28px rgba(0,0,0,0.85), 0 0 60px -20px hsla(280 90% 60% / 0.4)",
             }}
           >
-            <Link2 size={20} className="text-ink-muted" />
-            <input
-              value={url}
-              onChange={(e) => {
-                setUrl(e.target.value);
-                if (formError) setFormError(null);
-              }}
-              placeholder={t("inputPlaceholder")}
-              className="kf-mono flex-1 border-none bg-transparent text-[17px] text-ink outline-none placeholder:text-ink-subtle"
-            />
+            <div className="flex min-h-12 w-full min-w-0 items-center gap-3 px-2 sm:flex-1 sm:px-0">
+              <Link2 size={20} className="shrink-0 text-ink-muted" />
+              <input
+                value={url}
+                onChange={(e) => {
+                  setUrl(e.target.value);
+                  if (formError) setFormError(null);
+                }}
+                placeholder={t("inputPlaceholder")}
+                className="kf-mono min-w-0 flex-1 border-none bg-transparent text-base text-ink outline-none placeholder:text-ink-subtle sm:text-[17px]"
+              />
+            </div>
             <button
               type="submit"
               disabled={createJob.isPending || !url.trim()}
-              className="flex items-center gap-2.5 rounded-full px-[26px] py-3.5 text-[15.5px] font-semibold text-[#0a0912] transition-opacity disabled:opacity-50"
+              className="flex min-h-12 w-full items-center justify-center gap-2.5 rounded-full px-[26px] text-[15.5px] font-semibold text-[#0a0912] transition-opacity disabled:opacity-50 sm:w-auto"
               style={{
                 background:
                   "linear-gradient(120deg, hsl(200 95% 72%), hsl(280 92% 74%))",
@@ -248,7 +250,7 @@ export default function HomePage() {
         </form>
 
         {/* hints / error */}
-        <div className="mt-[18px] flex min-h-[20px] items-center gap-[18px] text-[13px] text-ink-subtle">
+        <div className="mt-[18px] flex min-h-[20px] flex-wrap items-center justify-center gap-x-3 gap-y-2 text-[12px] text-ink-subtle sm:gap-[18px] sm:text-[13px]">
           {formError ? (
             <span style={{ color: "hsl(8 90% 68%)" }}>{formError}</span>
           ) : (
@@ -281,8 +283,8 @@ export default function HomePage() {
 
       {/* processing queue */}
       {visibleJobs.length > 0 && (
-        <GlassPanel className="relative z-[2] mx-[34px] mb-7 rounded-[22px] px-[18px] py-4">
-          <div className="mb-3 flex items-center gap-2.5">
+        <GlassPanel className="relative z-[2] mx-4 mb-5 rounded-[18px] px-3 py-4 sm:mx-[34px] sm:mb-7 sm:rounded-[22px] sm:px-[18px]">
+          <div className="mb-3 flex flex-wrap items-center gap-2.5">
             <SlidersHorizontal size={15} className="text-ink-muted" />
             <span className="text-[13.5px] font-semibold text-ink">
               {t("queueTitle")}
@@ -290,10 +292,10 @@ export default function HomePage() {
             <span className="kf-mono rounded-md bg-white/[0.06] px-[7px] py-0.5 text-[11px] text-ink-subtle">
               {t("queueCounts", { active: activeCount, done: doneCount })}
             </span>
-            <div className="flex-1" />
-            <span className="text-[12px] text-ink-subtle">{t("queueHint")}</span>
+            <div className="hidden flex-1 sm:block" />
+            <span className="hidden text-[12px] text-ink-subtle md:inline">{t("queueHint")}</span>
           </div>
-          <div className="grid grid-cols-1 gap-2.5 md:grid-cols-2">
+          <div className="grid grid-cols-1 gap-2.5 min-[900px]:grid-cols-2">
             {visibleJobs.map((job) => (
               <QueueRow
                 key={job.id}

@@ -132,7 +132,7 @@ function MoreMenu({ track, playlists, currentPlaylistId, onCorrect, onClose }: M
   return (
     <div ref={ref} className="relative">
       {subMenu === "confirmDelete" ? (
-        <GlassPanel className="absolute bottom-full mb-1 right-0 z-20 min-w-[180px] rounded-[14px] p-3">
+        <GlassPanel className="kf-track-menu absolute bottom-full right-0 z-20 mb-1 min-w-[180px] rounded-[14px] p-3">
           <p className="text-[12.5px] text-ink-muted mb-3">{t("deleteTrack")}?</p>
           <div className="flex gap-2">
             <button
@@ -152,7 +152,7 @@ function MoreMenu({ track, playlists, currentPlaylistId, onCorrect, onClose }: M
           </div>
         </GlassPanel>
       ) : subMenu === "playlist" ? (
-        <GlassPanel className="absolute bottom-full mb-1 right-0 z-20 min-w-[200px] rounded-[14px] p-1.5">
+        <GlassPanel className="kf-track-menu absolute bottom-full right-0 z-20 mb-1 min-w-[200px] rounded-[14px] p-1.5">
           <p className="kf-mono px-3 py-1.5 text-[10.5px] text-ink-subtle tracking-widest">
             {t("addToPlaylist")}
           </p>
@@ -178,7 +178,7 @@ function MoreMenu({ track, playlists, currentPlaylistId, onCorrect, onClose }: M
           </button>
         </GlassPanel>
       ) : subMenu === "tags" ? (
-        <GlassPanel className="absolute bottom-full mb-1 right-0 z-20 min-w-[220px] rounded-[14px] p-1.5">
+        <GlassPanel className="kf-track-menu absolute bottom-full right-0 z-20 mb-1 min-w-[220px] rounded-[14px] p-1.5">
           <p className="kf-mono px-3 py-1.5 text-[10.5px] text-ink-subtle tracking-widest">
             {t("tagLabel")}
           </p>
@@ -226,7 +226,7 @@ function MoreMenu({ track, playlists, currentPlaylistId, onCorrect, onClose }: M
           </button>
         </GlassPanel>
       ) : (
-        <GlassPanel className="absolute bottom-full mb-1 right-0 z-20 min-w-[200px] rounded-[14px] p-1.5">
+        <GlassPanel className="kf-track-menu absolute bottom-full right-0 z-20 mb-1 min-w-[200px] rounded-[14px] p-1.5">
           <Link
             href={`/player?track=${track.id}`}
             onClick={onClose}
@@ -368,7 +368,7 @@ export function TrackCard({ track, isActive, onPlay, playlists, currentPlaylistI
   return (
     <>
       <GlassPanel
-        className="group relative flex flex-col overflow-hidden rounded-[20px] transition-transform hover:scale-[1.01]"
+        className="touch-no-scale group relative flex flex-col overflow-visible rounded-[20px] transition-transform hover:scale-[1.01]"
         style={{ boxShadow: isActive ? `0 0 0 2px ${m.primary}, 0 20px 50px -12px rgba(0,0,0,0.8)` : "0 8px 30px -8px rgba(0,0,0,0.7)" }}
       >
         {/* Thumbnail / mood bg */}
@@ -405,7 +405,7 @@ export function TrackCard({ track, isActive, onPlay, playlists, currentPlaylistI
           <button
             type="button"
             onClick={() => onPlay(track.id)}
-            className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+            className="touch-visible absolute inset-0 flex items-center justify-center opacity-0 transition-opacity group-hover:opacity-100"
             aria-label={t("play")}
           >
             <span
@@ -465,7 +465,7 @@ export function TrackCard({ track, isActive, onPlay, playlists, currentPlaylistI
             <button
               type="button"
               onClick={toggleFavorite}
-              className="flex h-7 w-7 items-center justify-center rounded-lg transition-colors"
+              className="kf-touch-target rounded-lg transition-colors"
               style={{ background: "rgba(255,255,255,0.06)" }}
               aria-label="Favorite"
             >
@@ -482,7 +482,7 @@ export function TrackCard({ track, isActive, onPlay, playlists, currentPlaylistI
               rel="noreferrer"
               onClick={(e) => e.stopPropagation()}
               title={t("openYoutube")}
-              className="flex h-7 w-7 items-center justify-center rounded-lg transition-colors"
+              className="kf-touch-target rounded-lg transition-colors"
               style={{ background: "rgba(255,255,255,0.06)", color: "rgba(255,255,255,0.45)" }}
             >
               <ExternalLink size={13} />
@@ -500,7 +500,9 @@ export function TrackCard({ track, isActive, onPlay, playlists, currentPlaylistI
               <button
                 type="button"
                 onClick={(e) => { e.stopPropagation(); setMenuOpen((v) => !v); }}
-                className="flex h-7 w-7 items-center justify-center rounded-lg text-ink-subtle hover:text-ink transition-colors"
+                aria-label={t("trackActions")}
+                aria-expanded={menuOpen}
+                className="kf-touch-target rounded-lg text-ink-subtle hover:text-ink transition-colors"
                 style={{ background: "rgba(255,255,255,0.06)" }}
               >
                 <MoreHorizontal size={14} />

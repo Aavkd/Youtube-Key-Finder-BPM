@@ -3,6 +3,16 @@
     "name": "Key Finder",
     "tagline": "Importez des instrumentaux depuis YouTube, analysez le BPM + la tonalité, et construisez votre bibliothèque."
   },
+  "auth": {
+    "prompt": "Saisissez le token d'acces pour continuer.",
+    "placeholder": "Token d'acces",
+    "checking": "Verification...",
+    "submit": "Acceder",
+    "expired": "Session expiree. Saisissez a nouveau le token.",
+    "invalid": "Token invalide. Reessayez.",
+    "unreachable": "Impossible de joindre le backend. Verifiez votre connexion.",
+    "logout": "Deconnexion"
+  },
   "nav": {
     "home": "Accueil",
     "discovery": "Explorer",
@@ -12,7 +22,12 @@
     "theme": "Thème",
     "language": "Langue",
     "themeDark": "Sombre",
-    "themeLight": "Clair"
+    "themeLight": "Clair",
+    "primaryNavigation": "Navigation principale",
+    "quickPreferences": "Preferences rapides",
+    "more": "Plus",
+    "close": "Fermer",
+    "logout": "Deconnexion"
   },
   "home": {
     "kickerPaste": "COLLER",
@@ -162,6 +177,10 @@
     "manualIndicator": "Défini manuellement",
     "closePlayer": "Fermer le lecteur",
     "bpmDisplay": "{bpm} BPM"
+    ,"sections": "Sections et playlists"
+    ,"openSections": "Ouvrir les sections et playlists"
+    ,"closeSections": "Fermer les sections et playlists"
+    ,"trackActions": "Actions du titre"
   },
   "discovery": {
     "kicker": "EXPLORER",

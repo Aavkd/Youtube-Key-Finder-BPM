@@ -64,7 +64,7 @@ function VideoCard({ item, status, onImport, t }: VideoCardProps) {
   const thumbSrc = item.thumbnail_url;
 
   return (
-    <GlassPanel className="flex flex-col overflow-hidden rounded-[16px] transition-all hover:scale-[1.015]">
+    <GlassPanel className="touch-no-scale group flex flex-col overflow-hidden rounded-[16px] transition-all hover:scale-[1.015]">
       {/* Thumbnail */}
       <div className="relative aspect-video w-full shrink-0 overflow-hidden bg-white/5">
         {thumbSrc ? (
@@ -85,7 +85,7 @@ function VideoCard({ item, status, onImport, t }: VideoCardProps) {
           href={ytUrl(item.youtube_id)}
           target="_blank"
           rel="noopener noreferrer"
-          className="absolute right-2 top-2 flex h-7 w-7 items-center justify-center rounded-full bg-black/50 opacity-0 transition-opacity hover:opacity-100 group-hover:opacity-100 focus:opacity-100"
+          className="touch-visible absolute right-2 top-2 flex h-11 w-11 items-center justify-center rounded-full bg-black/60 opacity-0 transition-opacity hover:opacity-100 group-hover:opacity-100 focus:opacity-100"
           aria-label={t("openYoutube")}
           title={t("openYoutube")}
           tabIndex={0}
@@ -95,7 +95,7 @@ function VideoCard({ item, status, onImport, t }: VideoCardProps) {
       </div>
 
       {/* Meta */}
-      <div className="flex flex-1 flex-col gap-3 p-4">
+      <div className="flex flex-1 flex-col gap-3 p-3.5 sm:p-4">
         <div className="flex-1">
           <p
             className="line-clamp-2 text-[13px] font-medium leading-snug text-ink"
@@ -126,7 +126,7 @@ function ImportButton({
 }) {
   if (status === "done") {
     return (
-      <div className="flex items-center gap-1.5 rounded-[10px] bg-green-500/15 px-3 py-1.5 text-[12px] font-medium text-green-400">
+      <div className="flex min-h-11 items-center gap-1.5 rounded-[10px] bg-green-500/15 px-3 text-[12px] font-medium text-green-400">
         <CheckCircle2 size={13} />
         {t("imported")}
       </div>
@@ -136,7 +136,7 @@ function ImportButton({
     return (
       <button
         onClick={onImport}
-        className="flex items-center gap-1.5 rounded-[10px] bg-red-500/15 px-3 py-1.5 text-[12px] font-medium text-red-400 transition-colors hover:bg-red-500/25"
+        className="flex min-h-11 items-center gap-1.5 rounded-[10px] bg-red-500/15 px-3 text-[12px] font-medium text-red-400 transition-colors hover:bg-red-500/25"
       >
         <XCircle size={13} />
         {t("importError")} — {t("import")}
@@ -145,7 +145,7 @@ function ImportButton({
   }
   if (status === "loading") {
     return (
-      <div className="flex items-center gap-1.5 rounded-[10px] bg-white/5 px-3 py-1.5 text-[12px] font-medium text-ink-muted">
+      <div className="flex min-h-11 items-center gap-1.5 rounded-[10px] bg-white/5 px-3 text-[12px] font-medium text-ink-muted">
         <Loader2 size={13} className="animate-spin" />
         {t("importing")}
       </div>
@@ -154,7 +154,7 @@ function ImportButton({
   return (
     <button
       onClick={onImport}
-      className="rounded-[10px] bg-primary/20 px-3 py-1.5 text-[12px] font-semibold text-primary transition-colors hover:bg-primary/35"
+      className="min-h-11 rounded-[10px] bg-primary/20 px-3 text-[12px] font-semibold text-primary transition-colors hover:bg-primary/35"
     >
       {t("import")}
     </button>
@@ -173,7 +173,7 @@ function VideoGrid({
   t: ReturnType<typeof useTranslations<"discovery">>;
 }) {
   return (
-    <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
+    <div className="grid grid-cols-1 gap-4 min-[430px]:grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
       {items.map((item) => (
         <VideoCard
           key={item.youtube_id}
@@ -191,7 +191,7 @@ function VideoGrid({
 
 function NoApiKeyBanner({ t }: { t: ReturnType<typeof useTranslations<"discovery">> }) {
   return (
-    <GlassPanel variant="soft" className="flex items-start gap-4 rounded-[16px] p-5">
+    <GlassPanel variant="soft" className="flex flex-col items-start gap-3 rounded-[16px] p-4 sm:flex-row sm:gap-4 sm:p-5">
       <div className="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-amber-400/15">
         <AlertCircle size={18} className="text-amber-400" />
       </div>
@@ -232,7 +232,7 @@ function PlaylistSection({
           <p className="text-[12.5px] text-ink-subtle">{t("noLinkedPlaylistsHint")}</p>
           <Link
             href="/settings"
-            className="mt-2 flex items-center gap-1.5 rounded-[10px] bg-white/8 px-4 py-1.5 text-[12px] font-medium text-ink-muted transition-colors hover:bg-white/12 hover:text-ink"
+            className="mt-2 flex min-h-11 items-center gap-1.5 rounded-[10px] bg-white/8 px-4 text-[12px] font-medium text-ink-muted transition-colors hover:bg-white/12 hover:text-ink"
           >
             <Settings size={13} />
             {t("goToSettings")}
@@ -247,13 +247,14 @@ function PlaylistSection({
       <SectionHeader label={t("linkedPlaylists")} />
 
       {/* Playlist tabs */}
-      <div className="mb-4 flex flex-wrap gap-2">
+      <div className="relative mb-4 -mx-4 overflow-hidden px-4 after:pointer-events-none after:absolute after:inset-y-0 after:right-0 after:w-10 after:bg-gradient-to-l after:from-[var(--kf-base)] after:to-transparent sm:mx-0 sm:px-0 sm:after:hidden">
+        <div className="kf-scroll-tabs flex gap-2 overflow-x-auto pb-2">
         {playlists.map((url, i) => (
           <button
             key={url}
             onClick={() => onSelect(url)}
             className={cn(
-              "rounded-full px-4 py-1.5 text-[12px] font-medium transition-colors",
+              "min-h-11 shrink-0 rounded-full px-4 text-[12px] font-medium transition-colors",
               activePlaylist === url
                 ? "bg-primary/25 text-primary"
                 : "bg-white/6 text-ink-muted hover:bg-white/10 hover:text-ink",
@@ -263,6 +264,7 @@ function PlaylistSection({
             {playlistLabel(url, i + 1)}
           </button>
         ))}
+        </div>
       </div>
 
       {isLoading && (
@@ -392,37 +394,37 @@ export function DiscoveryView() {
     String((probe.error as { status?: number })?.status ?? "").startsWith("503");
 
   return (
-    <div className="relative flex h-full min-h-screen w-full flex-col">
+    <div className="kf-viewport relative flex w-full flex-col">
       <Aurora blobs={BLOBS} speed={0.6} />
 
-      <div className="relative z-[2] flex flex-1 flex-col gap-7 overflow-y-auto px-8 py-7 md:px-10">
+      <div className="kf-scrollable relative z-[2] flex flex-1 flex-col gap-6 px-4 py-5 sm:gap-7 sm:px-6 sm:py-7 md:px-10">
         {/* Header */}
         <header className="mb-1">
           <div className="kf-mono text-[11px] font-semibold tracking-[0.22em] text-[hsl(190_80%_65%)]">
             {t("kicker")}
           </div>
-          <h1 className="mt-2 text-[30px] font-semibold tracking-[-0.02em] text-ink">
+          <h1 className="mt-2 text-[clamp(30px,8vw,38px)] font-semibold tracking-[-0.02em] text-ink">
             {t("title")}
           </h1>
           <p className="mt-2 max-w-xl text-[14.5px] text-ink-muted">{t("subtitle")}</p>
         </header>
 
         {/* Search bar */}
-        <form onSubmit={handleSearch} className="flex gap-3">
-          <GlassPanel className="flex flex-1 items-center gap-3 rounded-full px-5 py-3">
+        <form onSubmit={handleSearch} className="flex flex-col gap-3 sm:flex-row">
+          <GlassPanel className="flex min-h-12 flex-1 items-center gap-3 rounded-full px-5 py-3">
             <Search size={16} className="shrink-0 text-ink-muted" />
             <input
               type="text"
               value={searchInput}
               onChange={(e) => setSearchInput(e.target.value)}
               placeholder={t("searchPlaceholder")}
-              className="min-w-0 flex-1 bg-transparent text-[14px] text-ink placeholder:text-ink-subtle outline-none"
+              className="min-w-0 flex-1 bg-transparent text-base text-ink placeholder:text-ink-subtle outline-none sm:text-[14px]"
             />
           </GlassPanel>
           <button
             type="submit"
             disabled={!searchInput.trim()}
-            className="rounded-full bg-primary/25 px-6 py-3 text-[13px] font-semibold text-primary transition-colors hover:bg-primary/40 disabled:opacity-40 disabled:cursor-not-allowed"
+            className="min-h-12 w-full rounded-full bg-primary/25 px-6 text-[13px] font-semibold text-primary transition-colors hover:bg-primary/40 disabled:cursor-not-allowed disabled:opacity-40 sm:w-auto"
           >
             {t("searchButton")}
           </button>

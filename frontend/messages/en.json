@@ -3,6 +3,16 @@
     "name": "Key Finder",
     "tagline": "Import instrumentals from YouTube, analyze BPM + musical key, and build your library."
   },
+  "auth": {
+    "prompt": "Enter the access token to continue.",
+    "placeholder": "Access token",
+    "checking": "Checking...",
+    "submit": "Continue",
+    "expired": "Your session expired. Enter the token again.",
+    "invalid": "Invalid token. Try again.",
+    "unreachable": "Unable to reach the backend. Check your connection.",
+    "logout": "Log out"
+  },
   "nav": {
     "home": "Home",
     "discovery": "Discover",
@@ -12,7 +22,12 @@
     "theme": "Theme",
     "language": "Language",
     "themeDark": "Dark",
-    "themeLight": "Light"
+    "themeLight": "Light",
+    "primaryNavigation": "Primary navigation",
+    "quickPreferences": "Quick preferences",
+    "more": "More",
+    "close": "Close",
+    "logout": "Log out"
   },
   "home": {
     "kickerPaste": "PASTE",
@@ -162,6 +177,10 @@
     "manualIndicator": "Manually set",
     "closePlayer": "Close player",
     "bpmDisplay": "{bpm} BPM"
+    ,"sections": "Sections and playlists"
+    ,"openSections": "Open sections and playlists"
+    ,"closeSections": "Close sections and playlists"
+    ,"trackActions": "Track actions"
   },
   "discovery": {
     "kicker": "DISCOVER",

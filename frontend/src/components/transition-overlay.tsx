@@ -27,7 +27,7 @@ export function TransitionOverlay({ active, mood, title }: TransitionOverlayProp
       {active && (
         <motion.div
           key="kf-transition"
-          className="fixed inset-0 z-[60] flex items-center justify-center"
+          className="fixed inset-0 z-[60] flex items-center justify-center px-4"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
@@ -40,8 +40,8 @@ export function TransitionOverlay({ active, mood, title }: TransitionOverlayProp
             animate={{ scale: 16, opacity: 0 }}
             transition={{ duration: 1.05, ease: [0.22, 1, 0.36, 1] }}
             style={{
-              width: 160,
-              height: 160,
+              width: "min(160px, 42vw)",
+              height: "min(160px, 42vw)",
               background: `radial-gradient(circle, ${primary}, ${deep} 70%, transparent)`,
               filter: "blur(8px)",
             }}
@@ -56,7 +56,7 @@ export function TransitionOverlay({ active, mood, title }: TransitionOverlayProp
               {t("openingPlayer")}
             </span>
             {title && (
-              <span className="max-w-[80vw] truncate text-[22px] font-semibold text-white">
+              <span className="line-clamp-2 max-w-[80vw] text-[20px] font-semibold text-white sm:text-[22px]">
                 {title}
               </span>
             )}
