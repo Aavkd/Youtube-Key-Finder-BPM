@@ -368,7 +368,7 @@ export function TrackCard({ track, isActive, onPlay, playlists, currentPlaylistI
   return (
     <>
       <GlassPanel
-        className="touch-no-scale group relative flex flex-col overflow-visible rounded-[20px] transition-transform hover:scale-[1.01]"
+        className="kf-pan-y touch-no-scale group relative flex flex-col overflow-visible rounded-[20px] transition-transform hover:scale-[1.01]"
         style={{ boxShadow: isActive ? `0 0 0 2px ${m.primary}, 0 20px 50px -12px rgba(0,0,0,0.8)` : "0 8px 30px -8px rgba(0,0,0,0.7)" }}
       >
         {/* Thumbnail / mood bg */}
@@ -401,24 +401,20 @@ export function TrackCard({ track, isActive, onPlay, playlists, currentPlaylistI
             <WaveformDecor trackId={track.id} color={m.primary} />
           </div>
 
-          {/* play button overlay */}
+          {/* bounded play button keeps the artwork usable as a pan surface on touch */}
           <button
             type="button"
             onClick={() => onPlay(track.id)}
-            className="touch-visible absolute inset-0 flex items-center justify-center opacity-0 transition-opacity group-hover:opacity-100"
+            className="absolute bottom-3 right-3 z-[1] flex h-[52px] w-[52px] items-center justify-center rounded-full text-white opacity-100 transition-opacity md:opacity-0 md:group-hover:opacity-100"
             aria-label={t("play")}
+            style={{
+              background: "rgba(10,9,18,0.55)",
+              backdropFilter: "blur(8px)",
+              border: "1.5px solid rgba(255,255,255,0.5)",
+              boxShadow: `0 8px 24px rgba(0,0,0,0.5), 0 0 30px -8px ${m.glow}`,
+            }}
           >
-            <span
-              className="flex h-[52px] w-[52px] items-center justify-center rounded-full text-white"
-              style={{
-                background: "rgba(10,9,18,0.55)",
-                backdropFilter: "blur(8px)",
-                border: "1.5px solid rgba(255,255,255,0.5)",
-                boxShadow: `0 8px 24px rgba(0,0,0,0.5), 0 0 30px -8px ${m.glow}`,
-              }}
-            >
-              <Play size={22} fill="currentColor" />
-            </span>
+            <Play size={22} fill="currentColor" />
           </button>
 
           {/* "now playing" EQ indicator */}

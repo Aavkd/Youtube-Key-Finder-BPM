@@ -787,7 +787,7 @@ export function LibraryView() {
   const sectionTitle = getSectionTitle(section, playlists ?? [], t);
 
   return (
-    <div className="kf-viewport relative flex overflow-hidden lg:h-screen">
+    <div className="kf-viewport relative flex overflow-visible lg:h-screen lg:overflow-hidden">
       <Aurora blobs={BLOBS} />
 
       {/* Sidebar */}
@@ -836,7 +836,7 @@ export function LibraryView() {
       )}
 
       {/* Main content */}
-      <div className="relative z-[2] flex flex-1 flex-col min-w-0">
+      <div className="relative z-[2] flex min-w-0 flex-1 flex-col lg:min-h-0">
         {/* Page header */}
         <div className="flex-none px-4 pb-4 pt-5 sm:px-6 sm:pt-7 lg:px-7">
           <div className="mb-1 flex items-baseline gap-3">
@@ -883,7 +883,7 @@ export function LibraryView() {
 
         {/* Track list / grid (scrollable) */}
         <div
-          className="kf-scrollable flex-1 px-4 sm:px-6 lg:px-7"
+          className="kf-scrollable kf-window-scroll-mobile flex-1 px-4 sm:px-6 lg:px-7"
           style={{ paddingBottom: activeTrack ? 190 : 32 }}
         >
           {isLoading ? (

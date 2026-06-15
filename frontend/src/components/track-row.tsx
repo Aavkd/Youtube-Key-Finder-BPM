@@ -282,7 +282,7 @@ export function TrackRow({
     <>
       <div
         className={cn(
-          "group grid grid-cols-[44px_minmax(0,1fr)_44px] items-center gap-2 rounded-[14px] px-2 py-2.5 transition-colors lg:flex lg:gap-3 lg:px-3",
+          "kf-pan-y group grid grid-cols-[40px_minmax(0,1fr)_40px] items-center gap-2 rounded-[14px] px-2 py-2.5 transition-colors lg:flex lg:gap-3 lg:px-3",
           isActive
             ? "bg-white/[0.08]"
             : "hover:bg-white/[0.04]",
@@ -294,7 +294,7 @@ export function TrackRow({
           <button
             type="button"
             onClick={() => onPlay(track.id)}
-            className="touch-visible kf-touch-target rounded-full text-ink-subtle opacity-0 transition-colors group-hover:opacity-100 hover:text-ink"
+            className="kf-touch-target rounded-full text-ink-subtle opacity-100 transition-colors hover:text-ink lg:opacity-0 lg:group-hover:opacity-100"
             aria-label={isPlaying ? t("pause") : t("play")}
           >
             {isActive && isPlaying ? (
@@ -433,7 +433,7 @@ export function TrackRow({
               onClick={(e) => { e.stopPropagation(); setMenuOpen((v) => !v); }}
               aria-label={t("trackActions")}
               aria-expanded={menuOpen}
-              className="touch-visible kf-touch-target rounded-lg text-ink-subtle opacity-0 transition-opacity group-hover:opacity-100 hover:text-ink"
+              className="kf-touch-target rounded-lg text-ink-subtle opacity-100 transition-opacity hover:text-ink lg:opacity-0 lg:group-hover:opacity-100"
               style={{ background: "rgba(255,255,255,0.06)" }}
             >
               <MoreHorizontal size={14} />

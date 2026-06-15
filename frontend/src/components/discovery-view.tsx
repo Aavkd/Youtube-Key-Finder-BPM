@@ -22,7 +22,7 @@ import {
   useDiscoveryPlaylist,
   useDiscoverySearch,
 } from "@/lib/api/hooks";
-import { cn } from "@/lib/utils";
+import { cn, decodeHtmlEntities } from "@/lib/utils";
 import { useUiStore } from "@/lib/store";
 
 // ── aurora blobs (teal / purple / amber palette) ────────────────────────────
@@ -60,18 +60,20 @@ interface VideoCardProps {
   t: ReturnType<typeof useTranslations<"discovery">>;
 }
 
-function VideoCard({ item, status, onImport, t }: VideoCardProps) {
+function VideoCard({ item: rawItem, status, onImport, t }: VideoCardProps) {
+  const title = React.useMemo(() => decodeHtmlEntities(rawItem.title) || "—", [rawItem.title]);
+  const item = React.useMemo(() => ({ ...rawItem, title }), [rawItem, title]);
   const thumbSrc = item.thumbnail_url;
 
   return (
-    <GlassPanel className="touch-no-scale group flex flex-col overflow-hidden rounded-[16px] transition-all hover:scale-[1.015]">
+    <GlassPanel className="kf-pan-y touch-no-scale group flex flex-col overflow-hidden rounded-[16px] transition-all hover:scale-[1.015]">
       {/* Thumbnail */}
       <div className="relative aspect-video w-full shrink-0 overflow-hidden bg-white/5">
         {thumbSrc ? (
           // eslint-disable-next-line @next/next/no-img-element
           <img
             src={thumbSrc}
-            alt={item.title}
+            alt={title}
             className="h-full w-full object-cover"
             loading="lazy"
           />
@@ -85,7 +87,7 @@ function VideoCard({ item, status, onImport, t }: VideoCardProps) {
           href={ytUrl(item.youtube_id)}
           target="_blank"
           rel="noopener noreferrer"
-          className="touch-visible absolute right-2 top-2 flex h-11 w-11 items-center justify-center rounded-full bg-black/60 opacity-0 transition-opacity hover:opacity-100 group-hover:opacity-100 focus:opacity-100"
+          className="absolute right-2 top-2 flex h-11 w-11 items-center justify-center rounded-full bg-black/60 opacity-100 transition-opacity hover:opacity-100 group-hover:opacity-100 focus:opacity-100 md:opacity-0"
           aria-label={t("openYoutube")}
           title={t("openYoutube")}
           tabIndex={0}
@@ -99,7 +101,7 @@ function VideoCard({ item, status, onImport, t }: VideoCardProps) {
         <div className="flex-1">
           <p
             className="line-clamp-2 text-[13px] font-medium leading-snug text-ink"
-            title={item.title}
+            title={title}
           >
             {item.title || "—"}
           </p>
@@ -397,7 +399,7 @@ export function DiscoveryView() {
     <div className="kf-viewport relative flex w-full flex-col">
       <Aurora blobs={BLOBS} speed={0.6} />
 
-      <div className="kf-scrollable relative z-[2] flex flex-1 flex-col gap-6 px-4 py-5 sm:gap-7 sm:px-6 sm:py-7 md:px-10">
+      <div className="kf-scrollable kf-window-scroll-mobile relative z-[2] flex flex-1 flex-col gap-6 px-4 py-5 sm:gap-7 sm:px-6 sm:py-7 md:px-10">
         {/* Header */}
         <header className="mb-1">
           <div className="kf-mono text-[11px] font-semibold tracking-[0.22em] text-[hsl(190_80%_65%)]">

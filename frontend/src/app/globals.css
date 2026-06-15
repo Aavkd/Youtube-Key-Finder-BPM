@@ -204,6 +204,14 @@
     touch-action: manipulation;
   }
 
+  .kf-pan-y {
+    touch-action: pan-y;
+  }
+
+  .kf-window-scroll-mobile {
+    min-height: 0;
+  }
+
   @media (min-width: 1024px) {
     .kf-app-main {
       height: 100vh;
@@ -266,6 +274,11 @@
     --glass-blur-soft: 16px;
   }
 
+  .kf-window-scroll-mobile {
+    overflow: visible;
+    flex: none;
+  }
+
   .kf-aurora {
     filter: blur(52px);
     opacity: 0.58 !important;
@@ -276,10 +289,6 @@
   button,
   a {
     touch-action: manipulation;
-  }
-
-  .touch-visible {
-    opacity: 1 !important;
   }
 
   .touch-no-scale:hover {
